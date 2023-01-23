@@ -26,7 +26,7 @@ if use_sample_data == "Use Sample Data":
     df = pd.read_csv("Data/healthcare-dataset-stroke-data.csv")
     st.session_state["df"] = df
     if df is not None:
-        st.markdown("You may now navigate to Data Analysis Page!")
+        st.markdown("You may now navigate to Data Overview Page!")
 
 elif use_sample_data == "Upload a file containing data":
 
@@ -37,4 +37,4 @@ elif use_sample_data == "Upload a file containing data":
         df = pd.read_csv(upload_file)
         st.session_state["df"] = df
         if df is not None:
-            st.markdown("You may now navigate to Data Analysis Page!")
+            st.markdown("You may now navigate to Data Overview Page!")

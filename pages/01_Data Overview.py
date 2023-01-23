@@ -85,6 +85,7 @@ if uploaded_file is not None:
     # # Can be used wherever a "file-like" object is accepted:
     # dataframe = pd.read_csv(uploaded_file)
     dataframe = uploaded_file
+    dataframe.drop("id", axis=1, inplace=True)
     rows = st.sidebar.slider("Select number of rows to view", 1, 10, 5)
     st.markdown("#### Dataset Snapshot")
     st.write(dataframe.head(rows))
@@ -99,11 +100,40 @@ if uploaded_file is not None:
     st.markdown("#### Dataset Description")
     st.write(dataframe.describe())
 
+
+if uploaded_file is not None:
+
+    col1, col2 = st.columns(2, gap="small")
+
+    with col1:
+        labels = dataframe["ever_married"].value_counts().index
+        values = dataframe["ever_married"].value_counts().values
+        fig = px.pie(
+            df,
+            values=values,
+            names=labels,
+            title="Percentage of dataset ever married",
+            hole=0.3,
+        )
+        st.plotly_chart(fig)
+    with col2:
+        labels = dataframe["work_type"].value_counts().index
+        values = dataframe["work_type"].value_counts().values
+        fig = px.pie(
+            df,
+            values=values,
+            names=labels,
+            title="Analysis of Patient Occupations",
+            hole=0.3,
+        )
+        st.plotly_chart(fig)
+
+
 if uploaded_file is not None:
 
     st.markdown("#### Correlation Plot")
 
-    fig = plt.figure(figsize=(15, 7))
+    fig = plt.figure(figsize=(12, 4))
 
     # Compute correlations
     corr = dataframe.corr()
