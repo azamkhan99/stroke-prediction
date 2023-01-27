@@ -37,6 +37,7 @@ from PIL import Image
 
 #Read data
 df = pd.read_csv("Data/healthcare-dataset-stroke-data.csv")
+st.session_state["df"] = df
 
 #drop id
 df.drop('id',inplace=True,axis=1)
