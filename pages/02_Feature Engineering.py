@@ -100,8 +100,16 @@ if selected == "Categorical Variable Encoding":
     ohe_enc = fe_OneHotEncoder(top_categories=None, drop_last=True)
 
     ohe_enc.fit(X_train)
+
+    if "ohe_enc" not in st.session_state:
+        st.session_state.ohe_enc = ohe_enc
     X_train = ohe_enc.transform(X_train)
     X_test = ohe_enc.transform(X_test)
+
+    if "X_train" not in st.session_state:
+        st.session_state.X_train = X_train
+    if "X_test" not in st.session_state:
+        st.session_state.X_test = X_test
 
     st.write(X_train.head())
 
@@ -194,6 +202,10 @@ if selected == "Handling Outliers":
     st.pyplot(diagnostic_plots(X_train, "bmi"))
 
     #############################Handling Outliers for avg_glucose_level#########################
+    X_train = st.session_state.X_train
+
+    X_test = st.session_state.X_test
+
     st.write("**Handling Outliers for avg_glucose_level**")
     st.write("avg_glucose_level has a dense group of outliers at the right-hand tile.")
 
@@ -239,6 +251,8 @@ if selected == "Handling Outliers":
 
     # fit the encoder
     encoder.fit(X_train, y_train)
+    if "encoder" not in st.session_state:
+        st.session_state.encoder = encoder
 
     # transform the data
     X_train = encoder.transform(X_train)
