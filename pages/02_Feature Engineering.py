@@ -33,10 +33,10 @@ from PIL import Image
 
 
 # Read data
-df = pd.read_csv("Data/healthcare-dataset-stroke-data.csv")
+df = st.session_state["df"]
 
 # drop id
-df.drop("id", inplace=True, axis=1)
+# df.drop("id", inplace=True, axis=1)
 
 
 ##################Feature Engineering app section###############################
