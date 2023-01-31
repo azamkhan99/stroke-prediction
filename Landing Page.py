@@ -24,6 +24,7 @@ use_sample_data = st.sidebar.radio(
 
 if use_sample_data == "Use Sample Data":
     df = pd.read_csv("Data/healthcare-dataset-stroke-data.csv")
+    df.drop("id", axis=1, inplace=True)
     st.session_state["df"] = df
     if df is not None:
         st.markdown("You may now navigate to Data Overview Page!")

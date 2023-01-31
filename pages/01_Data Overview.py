@@ -27,7 +27,7 @@ This dataset is used to predict whether a patient is likely to get stroke based 
 
 st.markdown("### 1.1 Data Overview")
 
-uploaded_file = df = st.session_state["df"]
+uploaded_file = st.session_state["df"]
 if uploaded_file is not None:
     # To read file as bytes:
     # bytes_data = uploaded_file.getvalue()
@@ -44,7 +44,6 @@ if uploaded_file is not None:
     # # Can be used wherever a "file-like" object is accepted:
     # dataframe = pd.read_csv(uploaded_file)
     dataframe = uploaded_file
-    dataframe.drop("id", axis=1, inplace=True)
     rows = st.sidebar.slider("Select number of rows to view", 1, 10, 5)
     st.markdown("#### Dataset Snapshot")
     st.write(dataframe.head(rows))
