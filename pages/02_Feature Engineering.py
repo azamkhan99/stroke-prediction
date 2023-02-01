@@ -39,6 +39,13 @@ df = st.session_state["df"]
 # df.drop("id", inplace=True, axis=1)
 
 
+########################'Define Colours'##############################
+enmax_palette = ["#86BC25", "#C4D600", "#43B02A", '#2C5234']
+color_codes_wanted = ['d_green', 'green_1', 'green_2','green_3']
+
+d_colours = lambda x: enmax_palette[color_codes_wanted.index(x)]
+
+
 ##################Feature Engineering app section###############################
 st.header("Feature Engineering")
 
@@ -120,21 +127,23 @@ if selected == "Handling Outliers":
     def diagnostic_plots(df, variable):
 
         # define figure size
-        plt.figure(figsize=(16, 4))
+        plt.figure(figsize=(10, 3))
 
         # histogram
         plt.subplot(1, 3, 1)
-        sns.distplot(df[variable], bins=30)
+        sns.distplot(df[variable], bins=30, color=d_colours('d_green'))
         plt.title("Histogram")
 
         # Q-Q plot
-        plt.subplot(1, 3, 2)
-        stats.probplot(df[variable], dist="norm", plot=plt)
+        ax2= plt.subplot(1, 3, 2)
+        res = stats.probplot(df[variable], dist="norm", plot=plt)
+        ax2.get_lines()[0].set_color('#86BC25')
+        ax2.get_lines()[0].set_linewidth(1)
         plt.ylabel("Variable quantiles")
 
         # boxplot
         plt.subplot(1, 3, 3)
-        sns.boxplot(y=df[variable])
+        sns.boxplot(y=df[variable], color=d_colours('d_green'))
         plt.title("Boxplot")
 
         plt.show()
@@ -223,8 +232,10 @@ if selected == "Handling Outliers":
         labels=["Low", "Normal", "High", "Very High"],
     )
 
-    fig = plt.figure(figsize=(10, 4))
-    sns.countplot(x="avg_glucose_level_ranked", data=X_train)
+    fig = plt.figure(figsize=(10, 7))
+    sns.countplot(x="avg_glucose_level_ranked",
+    data=X_train,
+    palette={d_colours('d_green'),d_colours('green_1'), d_colours('green_2'),d_colours('green_3')})
     st.pyplot(fig)
 
     st.write(
@@ -293,7 +304,7 @@ if selected == "Deal with Missing Values":
     st.write(f"- Variance after median imputation: {variance_median}")
 
     # check distibution for bmi before imputation
-    fig = px.histogram(X_train, x="bmi", marginal="box", hover_data=X_train)
+    fig = px.histogram(X_train, x="bmi", marginal="box", color_discrete_sequence=['#86BC25'], hover_data=X_train)
     fig.update_layout(title_text="Box Plot and Distribution of bmi Before Imputation")
 
     st.plotly_chart(fig)
@@ -305,7 +316,7 @@ if selected == "Deal with Missing Values":
     hist_data = [x2, x3]
 
     group_labels = ["Median Imputation", "Mean Imputation"]
-    colors = ["#835AF1", "#37AA9C"]
+    colors = ["#86BC25", "#2C5234"]
 
     # Create distplot with curve_type set to 'normal'
     fig = ff.create_distplot(hist_data, group_labels, show_hist=False, colors=colors)
