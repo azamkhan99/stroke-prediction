@@ -270,7 +270,7 @@ if uploaded_file is not None:
 
     st.pyplot(fig)
 
-
+#
 ##############################################2.3 Glucose Levels#########################################
 
 st.markdown("### 2.3. Glucose Levels")
