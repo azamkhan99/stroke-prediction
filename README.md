@@ -7,6 +7,6 @@ To launch web-app:
 
 Development workflow:
 
-1. Create a branch with a meaningful name from master
+1. Create a branch with a meaningful name from develop
 2. Make all changes in your branch
-3. Submit Pull Request to master
+3. Submit Pull Request to develop
