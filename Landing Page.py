@@ -2,15 +2,29 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+from PIL import Image
 
 import plotly.express as px
 
 st.set_page_config(layout="wide")
 
+image = Image.open("Images/deloitte.png")
+
+
+col1, col2, col3, col4 = st.columns(4, gap="small")
+
+with col1:
+    st.image(image, width=170)
+
+with col2:
+    st.title("Stroke Prediction")
+
 # Add a title and intro text
-st.title("Stroke Prediction")
+
 st.markdown(
-    """This is a web app to allow prediction of stroke given a set of input features.
+    """
+
+    This is a web app to allow prediction of stroke given a set of input features.
 
 Begin by uploading a dataset."""
 )
