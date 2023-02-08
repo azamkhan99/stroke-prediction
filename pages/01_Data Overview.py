@@ -134,115 +134,124 @@ Medical research has demonstrated that aging is the most robust non-modifiable r
 link1 = "[Source](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6535078/#:~:text=Aging%20is%20the%20most%20robust,persons%20aged%20%E2%89%A565%20years)"
 st.markdown(link1, unsafe_allow_html=True)
 
+col1, col2 = st.columns(2, gap="small")
 
-if uploaded_file is not None:
+with col1:
 
-    st.markdown("#### Age-Stroke Distribution")
+    if uploaded_file is not None:
 
-    fig = plt.figure(figsize=(10, 7))
+        st.markdown("#### Age-Stroke Distribution")
 
-    # plot kde graphs
-    sns.kdeplot(
-        data=stroke,
-        x="age",
-        fill=True,
-        alpha=0.8,
-        linewidth=0.7,
-        ec="white",
-        color=d_colours("green_3"),
-    )
-    sns.kdeplot(
-        data=not_stroke,
-        x="age",
-        fill=True,
-        alpha=0.8,
-        linewidth=0.7,
-        ec="white",
-        color=d_colours("d_green"),
-    )
+        fig = plt.figure(figsize=(10, 7))
 
-    # formatting
-    plt.ylabel("Probability Density")
-    plt.xlabel("Age (Years)")
-    plt.legend(["Stroke", "Non-Stroke"])
+        # plot kde graphs
+        sns.kdeplot(
+            data=stroke,
+            x="age",
+            fill=True,
+            alpha=0.8,
+            linewidth=0.7,
+            ec="white",
+            color=d_colours("green_3"),
+        )
+        sns.kdeplot(
+            data=not_stroke,
+            x="age",
+            fill=True,
+            alpha=0.8,
+            linewidth=0.7,
+            ec="white",
+            color=d_colours("d_green"),
+        )
 
-    plt.ylabel("Probability Density")
+        # formatting
+        plt.ylabel("Probability Density")
+        plt.xlabel("Age (Years)")
+        plt.legend(["Stroke", "Non-Stroke"])
 
-    st.pyplot(fig)
+        plt.ylabel("Probability Density")
 
-if uploaded_file is not None:
+        st.pyplot(fig)
 
-    st.markdown("#### Age-Marrital-Status Distribution")
+with col2:
 
-    fig = plt.figure(figsize=(10, 7))
+    if uploaded_file is not None:
 
-    # split into married and unmarried sets
-    m = df[df["ever_married"] == "Yes"]
-    nm = df[df["ever_married"] == "No"]
+        st.markdown("#### Age-Marrital-Status Distribution")
 
-    # plot kde
-    sns.kdeplot(
-        data=m,
-        x="age",
-        fill=True,
-        alpha=0.8,
-        linewidth=0.7,
-        ec="white",
-        color=d_colours("green_3"),
-    )
-    sns.kdeplot(
-        data=nm,
-        x="age",
-        fill=True,
-        alpha=0.8,
-        linewidth=0.7,
-        ec="white",
-        color=d_colours("d_green"),
-    )
+        fig = plt.figure(figsize=(10, 7))
 
-    plt.ylabel("Probability Density")
-    plt.xlabel("Age (Years)")
-    plt.legend(["Married", "Unmarried"])
+        # split into married and unmarried sets
+        m = df[df["ever_married"] == "Yes"]
+        nm = df[df["ever_married"] == "No"]
 
-    st.pyplot(fig)
+        # plot kde
+        sns.kdeplot(
+            data=m,
+            x="age",
+            fill=True,
+            alpha=0.8,
+            linewidth=0.7,
+            ec="white",
+            color=d_colours("green_3"),
+        )
+        sns.kdeplot(
+            data=nm,
+            x="age",
+            fill=True,
+            alpha=0.8,
+            linewidth=0.7,
+            ec="white",
+            color=d_colours("d_green"),
+        )
 
-    st.markdown(
-        """
-    Similarly, a correlation was detected between marriage and stroke-risk. Upon further inspection, this can be explained by the age distrubtion between the married and unmarried subsets.
+        plt.ylabel("Probability Density")
+        plt.xlabel("Age (Years)")
+        plt.legend(["Married", "Unmarried"])
+
+        st.pyplot(fig)
+
+st.markdown(
     """
-    )
+Similarly, a correlation was detected between marriage and stroke-risk. Upon further inspection, this can be explained by the age distrubtion between the married and unmarried subsets.
+"""
+)
 
 
 # -----------------------2.2 BMI---------------------------------------------------------------------
 st.markdown("### 2.2. BMI")
-st.markdown(
+
+col1, col2 = st.columns(2, gap="large")
+
+with col1:
+    st.markdown(
+        """
+    The body mass index (BMI) is a measure that uses height and weight as a proxy health. The BMI calculation divides an adult's weight in kilograms by their height in metres squared. For example, A BMI of 25 means 25kg/m2. BMI ranges. For most adults, an ideal BMI is in the 18.5 to 24.9 range. For children and young people aged 2 to 18, the BMI calculation takes into account age and gender as well as height and weight.
+
+    The NHS defines BMI ranges as follows:
     """
-The body mass index (BMI) is a measure that uses height and weight as a proxy health. The BMI calculation divides an adult's weight in kilograms by their height in metres squared. For example, A BMI of 25 means 25kg/m2. BMI ranges. For most adults, an ideal BMI is in the 18.5 to 24.9 range. For children and young people aged 2 to 18, the BMI calculation takes into account age and gender as well as height and weight.
+    )
+with col2:
+    bmi_df = pd.DataFrame(
+        {
+            "BMI": [
+                "<18.5",
+                "Between 18.5 & 24.9",
+                "Between 25 and 29.9",
+                "Between 30 and 39.9",
+                ">40",
+            ],
+            "Classification": [
+                "Underweight",
+                "Healthy",
+                "Overweight",
+                "Obese",
+                "Severely Obese",
+            ],
+        }
+    )
 
-The NHS defines BMI ranges as follows:
-"""
-)
-
-bmi_df = pd.DataFrame(
-    {
-        "BMI": [
-            "<18.5",
-            "Between 18.5 & 24.9",
-            "Between 25 and 29.9",
-            "Between 30 and 39.9",
-            ">40",
-        ],
-        "Classification": [
-            "Underweight",
-            "Healthy",
-            "Overweight",
-            "Obese",
-            "Severely Obese",
-        ],
-    }
-)
-
-st.write(bmi_df)
+    st.write(bmi_df)
 
 link2 = "[Source](https://www.nhs.uk/common-health-questions/lifestyle/what-is-the-body-mass-index-bmi/#:~:text=BMI%20ranges&text=below%2018.5%20%E2%80%93%20you're%20in,re%20in%20the%20obese%20range)"
 st.markdown(link2, unsafe_allow_html=True)

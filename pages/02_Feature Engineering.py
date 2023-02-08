@@ -189,12 +189,13 @@ if selected == "Handling Outliers":
     st.write(
         f"Based on the following clinical consideration, the upper bound is **{ulbmi1}**, with **{bmi_outlier}** outliers."
     )
-
-    image = Image.open("Images/body-mass-index-bmi-chart.jpg")
-    st.image(image, caption="Body Mass Index Classes")
-
-    image = image = Image.open("Images/bmi-chart.png")
-    st.image(image, caption="Body Mass Index Chart")
+    col1, col2 = st.columns(2, gap="small")
+    with col1:
+        image = Image.open("Images/body-mass-index-bmi-chart.jpg")
+        st.image(image, caption="Body Mass Index Classes")
+    with col2:
+        image = image = Image.open("Images/bmi-chart.png")
+        st.image(image, caption="Body Mass Index Chart")
 
     st.write(
         "After replacing outliers with the upper limit defined previously, there are no more outliers."
