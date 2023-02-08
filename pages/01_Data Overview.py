@@ -594,4 +594,4 @@ df_smoke = pd.DataFrame(
     }
 )
 
-st.write(df_smoke)
+# st.write(df_smoke)
