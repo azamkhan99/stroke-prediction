@@ -15,15 +15,23 @@ from sklearn.metrics import confusion_matrix
 from PIL import Image
 
 
-st.title("Stroke Prediction: Exploratory Data Analysis")
+########################'Define Colours'##############################
+enmax_palette = ["#86BC25", "#C4D600", "#43B02A", "#2C5234"]
+color_codes_wanted = ["d_green", "green_1", "green_2", "green_3"]
+
+d_colours = lambda x: enmax_palette[color_codes_wanted.index(x)]
+######################################################################
+
+
+st.title("Exploratory Data Analysis")
 
 st.markdown(
     """
 ## 1. Introduction
 
-According to the World Health Organization (WHO) stroke is the 2nd leading cause of death globally, responsible for approximately 11% of total deaths.
+According to the World Health Organization (WHO), stroke is the second leading cause of death globally, responsible for approximately **:red[11%]** of total deaths.
 
-This dataset is used to predict whether a patient is likely to get stroke based on the input parameters like gender, age, various diseases, and smoking status. Each row in the data provides relavant information about the patient.
+This dataset is used to predict whether a patient is likely to get stroke based on the input parameters such as **gender**, **age**, **bmi**, **various diseases**, **smoking status** and **social-economic status**. Each row in the data provides relavant information about the patient.
 
 """
 )
@@ -67,7 +75,7 @@ if uploaded_file is not None:
 
 if uploaded_file is not None:
 
-    col1, col2 = st.columns(2, gap="small")
+    col1, col2= st.columns(2, gap="small")
 
     with col1:
         labels = dataframe["ever_married"].value_counts().index
@@ -76,7 +84,7 @@ if uploaded_file is not None:
             df,
             values=values,
             names=labels,
-            title="Percentage of dataset ever married",
+            title="Distribution of Patient Marital Status",
             hole=0.3,
         )
         st.plotly_chart(fig)
@@ -87,35 +95,35 @@ if uploaded_file is not None:
             df,
             values=values,
             names=labels,
-            title="Analysis of Patient Occupations",
+            title="Distribution of Patient Occupations",
             hole=0.3,
         )
         st.plotly_chart(fig)
 
 
+
 if uploaded_file is not None:
 
     st.markdown("#### Correlation Plot")
+    df_corr = dataframe.corr()
 
-    fig = plt.figure(figsize=(8, 5))
+    x = list(df_corr.columns)
+    y = list(df_corr.index)
+    z = np.array(df_corr)
 
-    # Compute correlations
-    corr = dataframe.corr()
+    fig = ff.create_annotated_heatmap(
+        z = np.around(z, decimals=2),
+        x = x,
+        y = y ,
+        annotation_text = np.around(z, decimals=1),
+        hoverinfo='z',
+        colorscale='algae',
+        )
+    
+    fig.layout.height=800
+    fig.layout.width=1200
 
-    # Generate a mask for the upper triangle
-    mask = np.triu(np.ones_like(corr, dtype=bool))
-
-    # create deloitte themed colourmaps
-    d_cmap = sns.dark_palette("#92d400", input="hex", reverse=False)
-
-    enmax_palette = ["#86BC25", "#C4D600", "#43B02A", "#2C5234"]
-    color_codes_wanted = ["d_green", "green_1", "green_2", "green_3"]
-
-    d_colours = lambda x: enmax_palette[color_codes_wanted.index(x)]
-
-    sns.heatmap(corr, mask=mask, cmap=d_cmap, annot=False)
-    st.pyplot(fig)
-
+    st.plotly_chart(fig)
 
 # split stroke and non-stroke data
 stroke = df[df["stroke"] == 1]
@@ -127,7 +135,7 @@ st.markdown("## 2. Initial Observations")
 st.markdown(
     """### 2.1. Age
 
-Medical research has demonstrated that aging is the most robust non-modifiable risk factor for incident stroke, which doubles every 10 years after age 55 years. Approximately three-quarters of all strokes occur in persons aged ≥65 years. This is reflected within the stroke dataset, with the modal age of stroke incidence being 80.
+Medical research has demonstrated that **aging** is the most robust non-modifiable risk factor for incident stroke, which doubles every 10 years after age 55 years. Approximately **:red[75%]** of all strokes occur in persons aged **≥65** years. This is reflected within the stroke dataset, with the modal age of stroke incidence being 80.
 """
 )
 
