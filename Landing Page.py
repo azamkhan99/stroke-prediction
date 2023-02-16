@@ -84,8 +84,7 @@ if use_sample_data == "Use Sample Data":
     df = pd.read_csv("Data/healthcare-dataset-stroke-data.csv")
     df.drop("id", axis=1, inplace=True)
     st.session_state["df"] = df
-    if df is not None:
-        st.markdown("You may now navigate to Data Overview Page!")
+
 
 elif use_sample_data == "Upload a file containing data":
 
@@ -105,7 +104,7 @@ with row6_1:
 # row2_spacer1, row2_1, row2_spacer2, row2_2, row2_spacer3, row2_3, row2_spacer4, row2_4, row2_spacer5   = st.columns((.2, 1.6, .2, 1.6, .2, 1.6, .2, 1.6, .2))
 # with row2_1:
 #     unique_patients_in_df = df.game_id.nunique()
-#     str_patients = "🧍 " + str(unique_patients_in_df) + " People"
+#     str_patients = "🧍 " + str(unique_patients_in_df) + " Data points"
 #     st.markdown(str_patients)
 # with row2_2:
 #     unique_teams_in_df = len(np.unique(df_data_filtered.team).tolist())
@@ -129,4 +128,6 @@ with row3_1:
     see_data = st.expander("You can click here to see the raw data first 👉")
     with see_data:
         st.dataframe(data=df)
+    if df is not None:
+        st.markdown("You may now navigate to Data Overview Page!")
 st.text("")
