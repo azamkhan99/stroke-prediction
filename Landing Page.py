@@ -62,10 +62,11 @@ st_lottie(
 st.markdown(
     """
     This web-application allows user to add new samples and upload a file with custom dataset for real-time stroke prediction.
+    
+    ⚠️This app is designed for skill developement and does not provide any clinical recommendations!
 
     *Note:
-    This demo will use sample data from Kaggle, but user will be able to upload their own data for Data Overview, Feature Engineering and Prediction.
-    Due to the limitation of long training time, Modeling result is for sample data only.*
+    This demo uses publically available data from Kaggle and prediction is based on ML models that are previously trained on sample data.
 
 """
 )
