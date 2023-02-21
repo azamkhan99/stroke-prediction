@@ -290,30 +290,34 @@ if selected == "Handling Outliers":
     )
     st.pyplot(fig)
 
-    st.markdown(
-        """
-        The grouped avg_glucose_level is now a categorical variable, which also needs to be encoded as numerical representation.
+    col1, col2 = st.columns(2, gap="large")
+    with col1:
+        st.markdown(
+            """
+            ## Ordinal Encoding
+            The grouped avg_glucose_level is now a categorical variable, which also needs to be encoded as numerical representation.
 
-        Apply **Ordinal Encoding** to preserve the ranking characteristic. Compare avg_glucose_level before and after ordinal encoding:
+            Apply **Ordinal Encoding** to preserve the ranking characteristic. Compare avg_glucose_level before and after ordinal encoding:
 
-"""
-    )
+    """
+        )
 
-    # set up the encoder
-    encoder = fe_OrdinalEncoder(
-        encoding_method="ordered", variables=["avg_glucose_level_ranked"]
-    )
+    with col2:
+        # set up the encoder
+        encoder = fe_OrdinalEncoder(
+            encoding_method="ordered", variables=["avg_glucose_level_ranked"]
+        )
 
-    # fit the encoder
-    encoder.fit(X_train, y_train)
-    if "encoder" not in st.session_state:
-        st.session_state.encoder = encoder
+        # fit the encoder
+        encoder.fit(X_train, y_train)
+        if "encoder" not in st.session_state:
+            st.session_state.encoder = encoder
 
-    # transform the data
-    X_train = encoder.transform(X_train)
-    X_test = encoder.transform(X_test)
+        # transform the data
+        X_train = encoder.transform(X_train)
+        X_test = encoder.transform(X_test)
 
-    st.write(X_train[["avg_glucose_level", "avg_glucose_level_ranked"]].head(20))
+        st.write(X_train[["avg_glucose_level", "avg_glucose_level_ranked"]].head(20))
 
 
 ######################################Deal with Missing Values#######################
@@ -347,6 +351,9 @@ if selected == "Deal with Missing Values":
 
 """
     )
+    X_train = st.session_state.X_train
+
+    X_test = st.session_state.X_test
 
     mean = np.round(X_train.bmi.mean(), 1)
     median = np.round(X_train.bmi.median(), 1)
@@ -413,3 +420,14 @@ if selected == "Deal with Missing Values":
 
     # drop bmi column
     X_test.drop(["bmi"], axis=1, inplace=True)
+    X_train.drop("avg_glucose_level_ranked", axis=1, inplace=True)
+    X_test.drop("avg_glucose_level_ranked", axis=1, inplace=True)
+
+    if "X_train" not in st.session_state:
+        st.session_state.X_train = X_train
+    if "X_test" not in st.session_state:
+        st.session_state.X_test = X_test
+    if "y_train" not in st.session_state:
+        st.session_state.y_train = y_train
+    if "y_test" not in st.session_state:
+        st.session_state.y_test = y_test

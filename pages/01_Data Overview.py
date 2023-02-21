@@ -75,7 +75,7 @@ if uploaded_file is not None:
 
 if uploaded_file is not None:
 
-    col1, col2= st.columns(2, gap="small")
+    col1, pad1, col2, pad2 = st.columns((3, 1, 3, 3))
 
     with col1:
         labels = dataframe["ever_married"].value_counts().index
@@ -101,7 +101,6 @@ if uploaded_file is not None:
         st.plotly_chart(fig)
 
 
-
 if uploaded_file is not None:
 
     st.markdown("#### Correlation Plot")
@@ -112,16 +111,16 @@ if uploaded_file is not None:
     z = np.array(df_corr)
 
     fig = ff.create_annotated_heatmap(
-        z = np.around(z, decimals=2),
-        x = x,
-        y = y ,
-        annotation_text = np.around(z, decimals=1),
-        hoverinfo='z',
-        colorscale='algae',
-        )
-    
-    fig.layout.height=800
-    fig.layout.width=1200
+        z=np.around(z, decimals=2),
+        x=x,
+        y=y,
+        annotation_text=np.around(z, decimals=1),
+        hoverinfo="z",
+        colorscale="algae",
+    )
+
+    fig.layout.height = 800
+    fig.layout.width = 1200
 
     st.plotly_chart(fig)
 
