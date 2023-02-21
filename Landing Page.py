@@ -14,22 +14,6 @@ import requests
 from streamlit_lottie import st_lottie
 
 
-st.set_page_config(layout="wide")
-
-image = Image.open("Images/deloitte.png")
-
-col1, col2, col3, col4 = st.columns(4, gap="small")
-
-with col1:
-    st.image(image, width=170)
-
-with col2:
-    st.title("Stroke Prediction")
-
-
-# functions for animations
-
-
 def load_lottiefile(filepath: str):
     with open(filepath, "r") as f:
         return json.load(f)
@@ -40,6 +24,22 @@ def load_lottieurl(url: str):
     if r.status_code != 200:
         return None
     return r.json()
+
+
+st.set_page_config(layout="wide")
+
+image = Image.open("Images/deloitte.png")
+
+col1, col2, col3, col4 = st.columns((0.2, 0.3, 0.2, 1.6))
+
+with col2:
+    st.image(image, width=170)
+
+with col4:
+    st.title("Stroke Prediction")
+
+
+# functions for animations
 
 
 lottie_hello = load_lottiefile("animations/welcome.json")
@@ -63,9 +63,9 @@ st.markdown(
     """
     This web-application allows user to add new samples and upload a file with custom dataset for real-time stroke prediction.
 
+    *Note:
     This demo will use sample data from Kaggle, but user will be able to upload their own data for Data Overview, Feature Engineering and Prediction.
-
-    *Note: Due to the limitation of long training time, Modeling result is for sample data only.*
+    Due to the limitation of long training time, Modeling result is for sample data only.*
 
 """
 )

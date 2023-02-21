@@ -6,6 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from utils.helpers import present_prediction
+
 # user-interactive visulization with plotly
 import plotly.express as px
 import plotly.figure_factory as ff
@@ -135,34 +137,44 @@ selected = option_menu(
         "Random Forest Classifier",
         "Support Vector Machine",
         "XGBoost",
+        "Trained Logistic Regression",
     ],
     # icons = ['house', 'book', 'envelope'],
     orientation="horizontal",
 )
 
+inpu = st.session_state.datapoint
+inpu = st.session_state.ohe_enc.transform(inpu)
+inpu["avg_glucose_level_ranked"] = pd.cut(
+    inpu["avg_glucose_level"],
+    bins=[0, 90, 160, 230, 500],
+    labels=["Low", "Normal", "High", "Very High"],
+)
+# fit the encoder
+inpu = st.session_state.encoder.transform(inpu)
+inpu.drop("avg_glucose_level_ranked", axis=1, inplace=True)
+inpu["bmi"] = inpu.pop("bmi")
+
+# transform the data
+
+
+if "inpu" not in st.session_state:
+    st.session_state.inpu = inpu
+
+
 if selected == "Random Forest Classifier":
     model = joblib.load("models/balanced_randomforest.joblib")
-    inpu = st.session_state.datapoint
-    inpu = st.session_state.ohe_enc.transform(inpu)
-    inpu["avg_glucose_level_ranked"] = pd.cut(
-        inpu["avg_glucose_level"],
-        bins=[0, 90, 160, 230, 500],
-        labels=["Low", "Normal", "High", "Very High"],
-    )
-    # fit the encoder
-    inpu = st.session_state.encoder.transform(inpu)
-    inpu.drop("avg_glucose_level", axis=1, inplace=True)
-    inpu["bmi"] = inpu.pop("bmi")
 
-    # transform the data
     st.write("Transformed datapoint", inpu)
+    present_prediction(model, inpu)
 
-    pred = model.predict(inpu)
-    if pred == 0:
-        st.header("No Stroke!")
-    elif pred == 1:
-        st.header("STROKE")
+
 elif selected == "Support Vector Machine":
-    st.text("Yolo")
+    st.text("...")
 elif selected == "XGBoost":
-    st.text("Rofl")
+    st.text("...")
+elif selected == "Trained Logistic Regression":
+    model = joblib.load("models/trained_lr.joblib")
+
+    st.write("Transformed datapoint", inpu)
+    present_prediction(model, inpu)
