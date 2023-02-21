@@ -67,7 +67,7 @@ with tab4:
     c = st.multiselect("C Hyperparameters", [1, 10, 100, 1000])
     ratio = st.multiselect("L1 ratio (for elasticnet)", np.linspace(0, 1, 5))
 
-    if pen and c:
+    if pen and c and ratio:
         parameters = [{"penalty": pen}, {"C": c}, {"l1_ratio": ratio}]
         logreg = LogisticRegression(solver="saga", class_weight="balanced")
         grid_search = GridSearchCV(estimator=logreg, param_grid=parameters)
