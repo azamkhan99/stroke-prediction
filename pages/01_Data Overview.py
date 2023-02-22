@@ -225,12 +225,6 @@ if uploaded_file is not None:
 
         st.pyplot(fig)
 
-        plt.ylabel("Probability Density")
-        plt.xlabel("Age (Years)")
-        plt.legend(["Married", "Unmarried"])
-
-        st.pyplot(fig)
-
 st.markdown(
     """
 Similarly, a correlation was detected between marriage and stroke-risk. Upon further inspection, this can be explained by the age distrubtion between the married and unmarried subsets.
