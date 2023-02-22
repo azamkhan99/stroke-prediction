@@ -50,8 +50,6 @@ if uploaded_file is not None:
     # dataframe = pd.read_csv(uploaded_file)
     dataframe = uploaded_file
     rows = st.sidebar.slider("Select number of rows to view", 1, 10, 5)
-    st.markdown("#### Dataset Snapshot")
-    st.write(dataframe.head(rows))
 
 else:
     st.write("Awaiting CSV file to be uploaded.")
@@ -59,10 +57,16 @@ else:
 plt.style.use("dark_background")
 
 if uploaded_file is not None:
-    # if st.button("Show Dataset Description"):
 
-    st.markdown("#### Dataset Description")
-    st.write(dataframe.describe())
+    col1, col2 = st.columns(2, gap="small")
+    
+    with col1:
+        st.markdown("#### Dataset Snapshot")
+        st.write(dataframe.head(rows))
+    
+    with col2:
+        st.markdown("#### Dataset Description")
+        st.write(dataframe.describe())
 
 
 if uploaded_file is not None:
@@ -70,6 +74,7 @@ if uploaded_file is not None:
     col1, col2 = st.columns(2, gap="small")
 
     with col1:
+
         labels = dataframe["ever_married"].value_counts().index
         values = dataframe["ever_married"].value_counts().values
         fig = px.pie(
@@ -81,6 +86,7 @@ if uploaded_file is not None:
         )
         st.plotly_chart(fig)
     with col2:
+        
         labels = dataframe["work_type"].value_counts().index
         values = dataframe["work_type"].value_counts().values
         fig = px.pie(
@@ -93,28 +99,32 @@ if uploaded_file is not None:
         st.plotly_chart(fig)
 
 
+
+
 if uploaded_file is not None:
+    col1, col2 = st.columns(2, gap="small")
+    with col1:
 
-    st.markdown("#### Correlation Plot")
+        st.markdown("#### Correlation Plot")
 
-    fig = plt.figure(figsize=(8, 5))
+        fig = plt.figure(figsize=(8, 5))
 
-    # Compute correlations
-    corr = dataframe.corr()
+        # Compute correlations
+        corr = dataframe.corr()
 
-    # Generate a mask for the upper triangle
-    mask = np.triu(np.ones_like(corr, dtype=bool))
+        # Generate a mask for the upper triangle
+        mask = np.triu(np.ones_like(corr, dtype=bool))
 
-    # create deloitte themed colourmaps
-    d_cmap = sns.dark_palette("#92d400", input="hex", reverse=False)
+        # create deloitte themed colourmaps
+        d_cmap = sns.dark_palette("#92d400", input="hex", reverse=False)
 
-    enmax_palette = ["#86BC25", "#C4D600", "#43B02A", "#2C5234"]
-    color_codes_wanted = ["d_green", "green_1", "green_2", "green_3"]
+        enmax_palette = ["#86BC25", "#C4D600", "#43B02A", "#2C5234"]
+        color_codes_wanted = ["d_green", "green_1", "green_2", "green_3"]
 
-    d_colours = lambda x: enmax_palette[color_codes_wanted.index(x)]
+        d_colours = lambda x: enmax_palette[color_codes_wanted.index(x)]
 
-    sns.heatmap(corr, mask=mask, cmap=d_cmap, annot=False)
-    st.pyplot(fig)
+        sns.heatmap(corr, mask=mask, cmap=d_cmap, annot=False)
+        st.pyplot(fig)
 
 
 # split stroke and non-stroke data
@@ -135,82 +145,86 @@ link1 = "[Source](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6535078/#:~:text=
 st.markdown(link1, unsafe_allow_html=True)
 
 
+
 if uploaded_file is not None:
 
-    st.markdown("#### Age-Stroke Distribution")
-
-    fig = plt.figure(figsize=(10, 7))
+    col1, col2 = st.columns(2, gap="small")
+    with col1:
+        st.markdown("#### Age-Stroke Distribution")
+        
+        fig = plt.figure(figsize=(8, 5))
 
     # plot kde graphs
-    sns.kdeplot(
-        data=stroke,
-        x="age",
-        fill=True,
-        alpha=0.8,
-        linewidth=0.7,
-        ec="white",
-        color=d_colours("green_3"),
-    )
-    sns.kdeplot(
-        data=not_stroke,
-        x="age",
-        fill=True,
-        alpha=0.8,
-        linewidth=0.7,
-        ec="white",
-        color=d_colours("d_green"),
-    )
+        sns.kdeplot(
+            data=stroke,
+            x="age",
+            fill=True,
+            alpha=0.8,
+            linewidth=0.7,
+            ec="white",
+            color=d_colours("green_3"),
+        )
+        sns.kdeplot(
+            data=not_stroke,
+            x="age",
+            fill=True,
+            alpha=0.8,
+            linewidth=0.7,
+            ec="white",
+            color=d_colours("d_green"),
+        )
 
-    # formatting
-    plt.ylabel("Probability Density")
-    plt.xlabel("Age (Years)")
-    plt.legend(["Stroke", "Non-Stroke"])
+        # formatting
+        plt.ylabel("Probability Density")
+        plt.xlabel("Age (Years)")
+        plt.legend(["Stroke", "Non-Stroke"])
 
-    plt.ylabel("Probability Density")
+        plt.ylabel("Probability Density")
 
-    st.pyplot(fig)
+        st.pyplot(fig)
+    
+    with col2:
+        
+        st.markdown("#### Age-Marrital-Status Distribution")
+        fig = plt.figure(figsize=(8, 5))
 
-if uploaded_file is not None:
+        # split into married and unmarried sets
+        m = df[df["ever_married"] == "Yes"]
+        nm = df[df["ever_married"] == "No"]
 
-    st.markdown("#### Age-Marrital-Status Distribution")
+        # plot kde
+        sns.kdeplot(
+            data=m,
+            x="age",
+            fill=True,
+            alpha=0.8,
+            linewidth=0.7,
+            ec="white",
+            color=d_colours("green_3"),
+        )
+        sns.kdeplot(
+            data=nm,
+            x="age",
+            fill=True,
+            alpha=0.8,
+            linewidth=0.7,
+            ec="white",
+            color=d_colours("d_green"),
+        )
 
-    fig = plt.figure(figsize=(10, 7))
+        plt.ylabel("Probability Density")
+        plt.xlabel("Age (Years)")
+        plt.legend(["Married", "Unmarried"])
 
-    # split into married and unmarried sets
-    m = df[df["ever_married"] == "Yes"]
-    nm = df[df["ever_married"] == "No"]
-
-    # plot kde
-    sns.kdeplot(
-        data=m,
-        x="age",
-        fill=True,
-        alpha=0.8,
-        linewidth=0.7,
-        ec="white",
-        color=d_colours("green_3"),
-    )
-    sns.kdeplot(
-        data=nm,
-        x="age",
-        fill=True,
-        alpha=0.8,
-        linewidth=0.7,
-        ec="white",
-        color=d_colours("d_green"),
-    )
-
-    plt.ylabel("Probability Density")
-    plt.xlabel("Age (Years)")
-    plt.legend(["Married", "Unmarried"])
-
-    st.pyplot(fig)
+        st.pyplot(fig)
 
     st.markdown(
         """
     Similarly, a correlation was detected between marriage and stroke-risk. Upon further inspection, this can be explained by the age distrubtion between the married and unmarried subsets.
     """
     )
+
+
 
 
 # -----------------------2.2 BMI---------------------------------------------------------------------
@@ -277,60 +291,61 @@ df["bmi_bucket"] = df["bmi"].apply(BMI_bucket)
 
 
 if uploaded_file is not None:
+    col1, col2 = st.columns(2, gap="small")
+    with col1:
+        st.markdown("##### BMI-Stroke Distribution")
 
-    st.markdown("##### BMI-Stroke Distribution")
+        fig = plt.figure(figsize=(8, 5))
 
-    fig = plt.figure(figsize=(10, 7))
+        # plot kde graphs
+        sns.kdeplot(
+            data=stroke,
+            x="bmi",
+            fill=True,
+            alpha=0.8,
+            linewidth=0.7,
+            ec="white",
+            color=d_colours("green_3"),
+        )
+        sns.kdeplot(
+            data=not_stroke,
+            x="bmi",
+            fill=True,
+            alpha=0.8,
+            linewidth=0.7,
+            ec="white",
+            color=d_colours("d_green"),
+        )
 
-    # plot kde graphs
-    sns.kdeplot(
-        data=stroke,
-        x="bmi",
-        fill=True,
-        alpha=0.8,
-        linewidth=0.7,
-        ec="white",
-        color=d_colours("green_3"),
-    )
-    sns.kdeplot(
-        data=not_stroke,
-        x="bmi",
-        fill=True,
-        alpha=0.8,
-        linewidth=0.7,
-        ec="white",
-        color=d_colours("d_green"),
-    )
+        # formatting
+        plt.ylabel("Probability Density")
+        plt.legend(["Stroke", "Non-Stroke"])
+        plt.xlim(0, 60)
 
-    # formatting
-    plt.ylabel("Probability Density")
-    plt.legend(["Stroke", "Non-Stroke"])
-    plt.xlim(0, 60)
+        st.pyplot(fig)
 
-    st.pyplot(fig)
+    with col2:
+        st.markdown("##### BMI-Stoke Risk (Binning)")
 
-if uploaded_file is not None:
-    st.markdown("##### BMI-Stoke Risk (Binning)")
+        fig = plt.figure(figsize=(8, 5))
+        sns.barplot(
+            data=df,
+            x="bmi_bucket",
+            y="stroke",
+            order=["Underweight", "Healthy", "Overweight", "Obese", "Severely Obese"],
+            palette={
+                d_colours("d_green"),
+                d_colours("green_1"),
+                d_colours("green_2"),
+                d_colours("green_3"),
+            },
+            errcolor="grey",
+        )
 
-    fig = plt.figure(figsize=(10, 7))
-    sns.barplot(
-        data=df,
-        x="bmi_bucket",
-        y="stroke",
-        order=["Underweight", "Healthy", "Overweight", "Obese", "Severely Obese"],
-        palette={
-            d_colours("d_green"),
-            d_colours("green_1"),
-            d_colours("green_2"),
-            d_colours("green_3"),
-        },
-        errcolor="grey",
-    )
+        plt.ylabel("Stroke Frequency")
+        plt.xlabel("BMI Buckets")
 
-    plt.ylabel("Stroke Frequency")
-    plt.xlabel("BMI Buckets")
-
-    st.pyplot(fig)
+        st.pyplot(fig)
 
 #
 ##############################################2.3 Glucose Levels#########################################
@@ -352,37 +367,40 @@ st.markdown(link3, unsafe_allow_html=True)
 
 
 if uploaded_file is not None:
+    col1, col2 = st.columns(2, gap="small")
 
-    st.markdown("##### Gluclose-Stroke Distribution")
+    with col1:
 
-    fig = plt.figure(figsize=(10, 7))
+        st.markdown("##### Gluclose-Stroke Distribution")
 
-    # plot KDEs
-    sns.kdeplot(
-        data=stroke,
-        x="avg_glucose_level",
-        fill=True,
-        alpha=0.8,
-        linewidth=0.7,
-        ec="white",
-        color=d_colours("green_3"),
-    )
-    sns.kdeplot(
-        data=not_stroke,
-        x="avg_glucose_level",
-        fill=True,
-        alpha=0.8,
-        linewidth=0.7,
-        ec="white",
-        color=d_colours("d_green"),
-    )
+        fig = plt.figure(figsize=(8, 5))
 
-    # formatting
-    plt.ylabel("Probability Density")
-    plt.xlabel("Average Glucose Levels (mg/dl)")
-    plt.legend(["Stroke", "No Stroke"])
+        # plot KDEs
+        sns.kdeplot(
+            data=stroke,
+            x="avg_glucose_level",
+            fill=True,
+            alpha=0.8,
+            linewidth=0.7,
+            ec="white",
+            color=d_colours("green_3"),
+        )
+        sns.kdeplot(
+            data=not_stroke,
+            x="avg_glucose_level",
+            fill=True,
+            alpha=0.8,
+            linewidth=0.7,
+            ec="white",
+            color=d_colours("d_green"),
+        )
 
-    st.pyplot(fig)
+        # formatting
+        plt.ylabel("Probability Density")
+        plt.xlabel("Average Glucose Levels (mg/dl)")
+        plt.legend(["Stroke", "No Stroke"])
+
+        st.pyplot(fig)
 
 st.markdown(
     """
@@ -390,8 +408,39 @@ There are two distinct peaks in the above graph, align with the below glucose le
 """
 )
 
-image = Image.open("Images/glucose-chart.PNG")
-st.image(image, caption="Glucose Level Classifications")
+#image = Image.open("Images/glucose-chart.PNG")
+#st.image(image, caption="Glucose Level Classifications")
+
+glucose_classifcations_df = pd.DataFrame(
+    {
+        "Plasma Glucose Test": [
+            "Random",
+            "Fasting",
+            "2 hour post-prandial"
+        ],
+        "Normal": [
+            "Below 200 mg/dl",
+            "Below 100 mg/dl",
+            "Below 140 mg/dl",
+        ],
+        "Prediabetes": [
+            "NA",
+            "100 to 125 mg/dl",
+            "140 to 199mg/dl",
+        ],
+        "Diabetes": [
+            "200 mg/dl or more",
+            "126 mg/dl or more",
+            "200 mg/dl or more",
+        ],
+    }
+)
+
+glucose_classifcations_df.set_index("Plasma Glucose Test", inplace=True)
+
+st.write(glucose_classifcations_df)
+
+
 
 
 ##############################################2.4 Hypertension and Heart Disease#########################################
@@ -413,43 +462,46 @@ st.markdown(link4, unsafe_allow_html=True)
 
 if uploaded_file is not None:
 
-    st.markdown("##### Hypertension Stroke Risk")
+    col1, col2 = st.columns(2, gap="small")
 
-    fig = plt.figure(figsize=(10, 7))
+    with col1:
 
-    sns.barplot(
-        data=df.drop(df.index[[3116]]),
-        x="gender",
-        y="stroke",
-        hue="hypertension",
-        palette={d_colours("d_green"), d_colours("green_3")},
-        errcolor="grey",
-    )
+        st.markdown("##### Hypertension Stroke Risk")
 
-    plt.ylabel("Stroke Frequency")
+        fig = plt.figure(figsize=(8, 5))
 
-    # plt.legend(labels = ['Hypertension','No Hypertension'])
+        sns.barplot(
+            data=df.drop(df.index[[3116]]),
+            x="gender",
+            y="stroke",
+            hue="hypertension",
+            palette={d_colours("d_green"), d_colours("green_3")},
+            errcolor="grey",
+        )
 
-    st.pyplot(fig)
+        plt.ylabel("Stroke Frequency")
 
+        # plt.legend(labels = ['Hypertension','No Hypertension'])
 
-if uploaded_file is not None:
+        st.pyplot(fig)
 
-    st.markdown("##### Heart Disease Stroke Risk")
+    with col2:
 
-    fig = plt.figure(figsize=(10, 7))
+        st.markdown("##### Heart Disease Stroke Risk")
 
-    sns.barplot(
-        data=df.drop(df.index[[3116]]),
-        x="gender",
-        y="stroke",
-        hue="heart_disease",
-        palette={d_colours("d_green"), d_colours("green_3")},
-        errcolor="grey",
-    )
+        fig = plt.figure(figsize=(8, 5))
 
-    plt.ylabel("Stroke Frequency")
-    st.pyplot(fig)
+        sns.barplot(
+            data=df.drop(df.index[[3116]]),
+            x="gender",
+            y="stroke",
+            hue="heart_disease",
+            palette={d_colours("d_green"), d_colours("green_3")},
+            errcolor="grey",
+        )
+
+        plt.ylabel("Stroke Frequency")
+        st.pyplot(fig)
 
 # if uploaded_file is not None:
 
@@ -482,7 +534,7 @@ Evidently, heart disease and high blood pressure are indicators of stroke risk. 
 )
 
 st.markdown("###### Confusion Matrix for Incidence of Heart Disease and Hypertension")
-st.table(corr2)
+st.write(corr2)
 
 st.markdown("### 2.4. Smoking")
 
@@ -494,30 +546,85 @@ Smoking tobacco increases your risk of having a stroke. Someone who smokes 20 ci
 
 """
 )
+    
 
 if uploaded_file is not None:
-    st.markdown("##### Smoking Status Stroke Risk")
 
-    fig = plt.figure(figsize=(10, 7))
+    col1, col2 = st.columns(2, gap="small")
 
-    sns.barplot(
-        data=df,
-        x="smoking_status",
-        y="stroke",
-        order=["Unknown", "never smoked", "smokes", "formerly smoked"],
-        palette={
+    with col1:
+
+        st.markdown("##### Smoking Status Stroke Risk")
+
+        fig = plt.figure(figsize=(8, 5))
+
+        sns.barplot(
+            data=df,
+            x="smoking_status",
+            y="stroke",
+            order=["Unknown", "never smoked", "smokes", "formerly smoked"],
+            palette={
             d_colours("d_green"),
             d_colours("green_1"),
             d_colours("green_2"),
             d_colours("green_3"),
-        },
-        errcolor="grey",
-    )
+            },
+            errcolor="grey",
+        )
 
-    plt.xlabel("Smoking Status")
-    plt.ylabel("Stroke Frequency")
+        plt.xlabel("Smoking Status")
+        plt.ylabel("Stroke Frequency")
 
-    st.pyplot(fig)
+        st.pyplot(fig)
+
+    with col2:
+
+        st.markdown("##### Smoking Classification-Stoke Distribution ")
+
+        fig = plt.figure(figsize=(8, 5))
+
+    # plotting KDEs for each smoking category
+        sns.kdeplot(
+            data=df[df["smoking_status"] == "smokes"],
+            x="age",
+            fill=True,
+            alpha=0.8,
+            linewidth=0.7,
+            ec="white",
+            color=d_colours("green_1"),
+        )
+        sns.kdeplot(
+            data=df[df["smoking_status"] == "formerly smoked"],
+            x="age",
+            fill=True,
+            alpha=0.8,
+            linewidth=0.7,
+            ec="white",
+            color=d_colours("green_3"),
+        )
+        sns.kdeplot(
+            data=df[df["smoking_status"] == "never smoked"],
+            x="age",
+            fill=True,
+            alpha=0.8,
+            linewidth=0.7,
+            ec="white",
+            color=d_colours("d_green"),
+        )
+        sns.kdeplot(
+            data=df[df["smoking_status"] == "Unknown"],
+            x="age",
+            fill=True,
+            alpha=0.8,
+            linewidth=0.7,
+            ec="white",
+            color=d_colours("green_2"),
+        )
+
+        # formatting
+        plt.ylabel("Probability Density")
+        plt.legend(["smokes", "formely smoked", "never smoked", "Unknown"])
+        st.pyplot(fig)
 
 st.markdown(
     """
@@ -526,60 +633,11 @@ Former smokers appear to have the greatest risk of stroke, which is an unexpecte
 """
 )
 
-if uploaded_file is not None:
-
-    st.markdown("##### Smoking Classification-Stoke Distribution ")
-
-    fig = plt.figure(figsize=(10, 7))
-
-    # plotting KDEs for each smoking category
-    sns.kdeplot(
-        data=df[df["smoking_status"] == "smokes"],
-        x="age",
-        fill=True,
-        alpha=0.8,
-        linewidth=0.7,
-        ec="white",
-        color=d_colours("green_1"),
-    )
-    sns.kdeplot(
-        data=df[df["smoking_status"] == "formerly smoked"],
-        x="age",
-        fill=True,
-        alpha=0.8,
-        linewidth=0.7,
-        ec="white",
-        color=d_colours("green_3"),
-    )
-    sns.kdeplot(
-        data=df[df["smoking_status"] == "never smoked"],
-        x="age",
-        fill=True,
-        alpha=0.8,
-        linewidth=0.7,
-        ec="white",
-        color=d_colours("d_green"),
-    )
-    sns.kdeplot(
-        data=df[df["smoking_status"] == "Unknown"],
-        x="age",
-        fill=True,
-        alpha=0.8,
-        linewidth=0.7,
-        ec="white",
-        color=d_colours("green_2"),
-    )
-
-    # formatting
-    plt.ylabel("Probability Density")
-    plt.legend(["smokes", "formely smoked", "never smoked", "Unknown"])
-    st.pyplot(fig)
-
-# calculate means and medians
+    # calculate means and medians
 df_smoke = pd.DataFrame(
     {
         "Smoking Status": ["Unknown", "never smoked", "smokes", "formely smoked"],
-        "Mean Age": [
+         "Mean Age": [
             df[df["smoking_status"] == "Unknown"]["age"].mean(),
             df[df["smoking_status"] == "never smoked"]["age"].mean(),
             df[df["smoking_status"] == "smokes"]["age"].mean(),
@@ -594,4 +652,4 @@ df_smoke = pd.DataFrame(
     }
 )
 
-# st.write(df_smoke)
+st.write(df_smoke.set_index('Smoking Status'))
