@@ -15,6 +15,14 @@ import requests
 from streamlit_lottie import st_lottie
 
 
+########################'Define Colours'##############################
+enmax_palette = ["#86BC25", "#C4D600", "#43B02A", "#2C5234"]
+color_codes_wanted = ["d_green", "green_1", "green_2", "green_3"]
+
+d_colours = lambda x: enmax_palette[color_codes_wanted.index(x)]
+######################################################################
+
+
 def load_lottiefile(filepath: str):
     with open(filepath, "r") as f:
         return json.load(f)
@@ -55,12 +63,16 @@ elif use_sample_data == "Upload a file containing data":
             st.markdown("You may now navigate to Data Overview Page!")
 
 image = Image.open("Images/deloitte.png")
+logo = Image.open("Images/logo.png")
 
 col1, col2, col3, col4 = st.columns((1, 1, 3, 2))
 
 with col1:
     st.image(image, use_column_width=True)
 
+with col2:
+    st.image(logo ,use_column_width=True)
+    
 with col3:
     st.title("Stroke Prediction")
     lottie_hello = load_lottiefile("animations/welcome.json")
@@ -102,6 +114,7 @@ else:
             names=labels,
             title="Distribution of Target value",
             hole=0.3,
+            color_discrete_sequence=["#86BC25", "#43B02A"]
         )
 
         fig.update_layout(
@@ -120,6 +133,7 @@ else:
             names=labels,
             title="Distribution of Population gender",
             hole=0.3,
+            color_discrete_sequence=["#86BC25", "#43B02A"]
         )
         fig.update_layout(
             autosize=False,
@@ -130,7 +144,7 @@ else:
         st.plotly_chart(fig)
 
     with dist:
-        fig = px.histogram(df, x="age", title="Age distribution in dataset")
+        fig = px.histogram(df, x="age", title="Age distribution in dataset",color_discrete_sequence=["#86BC25"])
         fig.update_layout(
             autosize=False,
             width=650,
