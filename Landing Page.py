@@ -91,7 +91,7 @@ else:
             st.dataframe(data=df)
     st.text("")
 
-    pies, pad1, dist, pad2 = st.columns((3, 1, 3, 3))
+    pad0, pies, pad1, dist, pad2 = st.columns((0.25, 3, 1, 3, 3))
 
     with pies:
         labels = df["stroke"].value_counts().index
