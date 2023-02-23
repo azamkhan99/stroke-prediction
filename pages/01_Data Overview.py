@@ -91,6 +91,7 @@ if uploaded_file is not None:
             names=labels,
             title="Distribution of Patient Marital Status",
             hole=0.3,
+            color_discrete_sequence=["#86BC25", "#43B02A"]
         )
         st.plotly_chart(fig)
     with col2:
@@ -103,6 +104,7 @@ if uploaded_file is not None:
             names=labels,
             title="Distribution of Patient Occupations",
             hole=0.3,
+            color_discrete_sequence=["#86BC25", "#C4D600", "#43B02A", "#2C5234","green"]
         )
         st.plotly_chart(fig)
 
