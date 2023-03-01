@@ -1,7 +1,7 @@
 # streamlit packages
 import streamlit as st
 from streamlit_option_menu import option_menu
-from utils.helpers import plot_metrics, load_pretrained_model
+from utils.helpers import plot_metrics, load_pretrained_model, xgb_model
 import joblib
 
 # import basic packages
@@ -40,15 +40,46 @@ from PIL import Image
 
 st.title("Modelling")
 
+relevant_columns = [
+    "age",
+    "hypertension",
+    "heart_disease",
+    "gender_Female",
+    "gender_Male",
+    "ever_married_Yes",
+    "work_type_Private",
+    "work_type_Self-employed",
+    "work_type_children",
+    "work_type_Govt_job",
+    "Residence_type_Rural",
+    "smoking_status_formerly smoked",
+    "smoking_status_never smoked",
+    "smoking_status_smokes",
+    "avg_glucose_level_ranked",
+    "bmi",
+]
 X_train = st.session_state.X_train
 X_test = st.session_state.X_test
 y_train = st.session_state.y_train
 y_test = st.session_state.y_test
 
+X_train = X_train[relevant_columns]
+X_test = X_test[relevant_columns]
+
 
 tab1, tab2, tab3, tab4 = st.tabs(
     ["XGBoost", "Random Forests", "SVMs", "Train a Logistic Regression"]
 )
+
+with tab1:
+    # model = xgb_model(X_train, y_train)
+    # plot_metrics(
+    #     metrics_list=["Confusion Matrix", "ROC Curve", "Precision-Recall Curve"],
+    #     model=model,
+    #     x_test=X_test,
+    #     y_test=y_test,
+    # )
+    st.write("not implemented")
 
 with tab2:
     model = load_pretrained_model("models/balanced_randomforest.joblib")
@@ -58,6 +89,18 @@ with tab2:
         x_test=X_test,
         y_test=y_test,
     )
+
+with tab3:
+    model = load_pretrained_model("models/svm.pkl")
+    scaler = load_pretrained_model("models/scaler.pkl")
+    plot_metrics(
+        metrics_list=["Confusion Matrix", "ROC Curve", "Precision-Recall Curve"],
+        model=model,
+        x_test=X_test,
+        y_test=y_test,
+        scaler=scaler,
+    )
+
 
 with tab4:
 
@@ -85,13 +128,3 @@ with tab4:
             x_test=X_test,
             y_test=y_test,
         )
-
-    # run grid search
-
-    # return grid search results
-
-    # train with best hparams
-
-    # roc-auc
-
-    # cm

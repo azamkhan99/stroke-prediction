@@ -319,6 +319,9 @@ if selected == "Handling Outliers":
 
         st.write(X_train[["avg_glucose_level", "avg_glucose_level_ranked"]].head(20))
 
+        st.session_state.X_train = X_train
+        st.session_state.X_test = X_test
+
 
 ######################################Deal with Missing Values#######################
 if selected == "Deal with Missing Values":
@@ -417,17 +420,14 @@ if selected == "Deal with Missing Values":
 
     # use median from training set to replace missing values in test set to prevent overfitting
     X_test["bmi_median"] = X_test["bmi"].fillna(median)
-
-    # drop bmi column
     X_test.drop(["bmi"], axis=1, inplace=True)
-    X_train.drop("avg_glucose_level_ranked", axis=1, inplace=True)
-    X_test.drop("avg_glucose_level_ranked", axis=1, inplace=True)
+    X_train.rename(columns={"bmi_median": "bmi"}, inplace=True)
+    X_test.rename(columns={"bmi_median": "bmi"}, inplace=True)
 
-    if "X_train" not in st.session_state:
-        st.session_state.X_train = X_train
-    if "X_test" not in st.session_state:
-        st.session_state.X_test = X_test
-    if "y_train" not in st.session_state:
-        st.session_state.y_train = y_train
-    if "y_test" not in st.session_state:
-        st.session_state.y_test = y_test
+    X_train.drop("avg_glucose_level", axis=1, inplace=True)
+    X_test.drop("avg_glucose_level", axis=1, inplace=True)
+
+    st.session_state.X_train = X_train
+    st.session_state.X_test = X_test
+    st.session_state.y_train = y_train
+    st.session_state.y_test = y_test

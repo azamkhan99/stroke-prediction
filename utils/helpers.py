@@ -5,9 +5,16 @@ from sklearn.metrics import (
 )
 import streamlit as st
 import joblib
+import pickle
+from xgboost import XGBClassifier
+import xgboost as xgb
 
 
-def plot_metrics(metrics_list, model, x_test, y_test):
+def plot_metrics(metrics_list, model, x_test, y_test, scaler=None):
+    if scaler:
+        st.write("SCALED")
+        x_test = scaler.transform(x_test)
+        st.write(x_test)
     if "Confusion Matrix" in metrics_list:
         st.subheader("Confusion Matrix")
         plot_confusion_matrix(model, x_test, y_test)
@@ -23,7 +30,25 @@ def plot_metrics(metrics_list, model, x_test, y_test):
 
 
 def load_pretrained_model(filename):
-    model = joblib.load(filename)
+    if filename.split(".")[1] == "joblib":
+        model = joblib.load(filename)
+    elif filename.split(".")[1] == "pkl":
+        model = pickle.load(open(filename, "rb"))
+    return model
+
+
+def xgb_model(X_train, y_train):
+    model = XGBClassifier(
+        scale_pos_weight=17,
+        n_estimators=200,
+        learning_rate=0.01,
+        colsample_bytree=1.0,
+        gamma=1.5,
+        max_depth=4,
+        min_child_weight=10,
+        subsample=0.6,
+    )
+    model.fit(X_train, y_train)
     return model
 
 
