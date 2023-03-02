@@ -79,22 +79,42 @@ with tab1:
     #     x_test=X_test,
     #     y_test=y_test,
     # )
+    with st.expander("More information"):
+        st.image("Images/xgb_params.png")
+
+    st.header("Results")
     st.write("not implemented")
 
 with tab2:
+    with st.expander("More information"):
+        st.image("Images/rf_features.png")
+    st.header("Results")
     model = load_pretrained_model("models/balanced_randomforest.joblib")
     plot_metrics(
-        metrics_list=["Confusion Matrix", "ROC Curve", "Precision-Recall Curve"],
+        metrics_list=[
+            "Confusion Matrix",
+            "ROC Curve",
+            "Precision-Recall Curve",
+            "classification_report",
+        ],
         model=model,
         x_test=X_test,
         y_test=y_test,
     )
 
 with tab3:
+    with st.expander("More information"):
+        st.image("Images/svms.png")
+    st.header("Results")
     model = load_pretrained_model("models/svm.pkl")
     scaler = load_pretrained_model("models/scaler.pkl")
     plot_metrics(
-        metrics_list=["Confusion Matrix", "ROC Curve", "Precision-Recall Curve"],
+        metrics_list=[
+            "Confusion Matrix",
+            "ROC Curve",
+            "Precision-Recall Curve",
+            "classification_report",
+        ],
         model=model,
         x_test=X_test,
         y_test=y_test,
@@ -103,6 +123,8 @@ with tab3:
 
 
 with tab4:
+    with st.expander("More information"):
+        st.write("more info")
 
     # select hyperparams to tune
     st.write("Choose hyperparameters for grid search")
@@ -122,8 +144,14 @@ with tab4:
 
         y_pred = lrc.predict(X_test)
 
+        st.header("Results")
         plot_metrics(
-            metrics_list=["Confusion Matrix", "ROC Curve", "Precision-Recall Curve"],
+            metrics_list=[
+                "Confusion Matrix",
+                "ROC Curve",
+                "Precision-Recall Curve",
+                "classification_report",
+            ],
             model=lrc,
             x_test=X_test,
             y_test=y_test,

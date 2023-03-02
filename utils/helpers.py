@@ -2,31 +2,47 @@ from sklearn.metrics import (
     plot_confusion_matrix,
     plot_roc_curve,
     plot_precision_recall_curve,
+    classification_report,
 )
 import streamlit as st
 import joblib
 import pickle
-from xgboost import XGBClassifier
-import xgboost as xgb
+import pandas as pd
 
 
 def plot_metrics(metrics_list, model, x_test, y_test, scaler=None):
     if scaler:
-        st.write("SCALED")
         x_test = scaler.transform(x_test)
-        st.write(x_test)
-    if "Confusion Matrix" in metrics_list:
-        st.subheader("Confusion Matrix")
-        plot_confusion_matrix(model, x_test, y_test)
-        st.pyplot()
-    if "ROC Curve" in metrics_list:
-        st.subheader("ROC Curve")
-        plot_roc_curve(model, x_test, y_test)
-        st.pyplot()
-    if "Precision-Recall Curve" in metrics_list:
-        st.subheader("Precision-Recall Curve")
-        plot_precision_recall_curve(model, x_test, y_test)
-        st.pyplot()
+
+    col1, col2 = st.columns(2, gap="small")
+    with col1:
+
+        if "ROC Curve" in metrics_list:
+            st.subheader("ROC Curve")
+            plot_roc_curve(model, x_test, y_test)
+            st.pyplot()
+
+        if "Confusion Matrix" in metrics_list:
+            st.subheader("Confusion Matrix")
+            plot_confusion_matrix(model, x_test, y_test)
+            st.pyplot()
+
+    with col2:
+        if "Precision-Recall Curve" in metrics_list:
+            st.subheader("Precision-Recall Curve")
+            plot_precision_recall_curve(model, x_test, y_test)
+            st.pyplot()
+
+        if "classification_report" in metrics_list:
+            st.subheader("Classification Report")
+            report = classification_report(
+                y_test,
+                model.predict(x_test),
+                target_names=["No Stroke", "Stroke"],
+                output_dict=True,
+            )
+            report_df = pd.DataFrame(report)
+            st.dataframe(report_df.T, use_container_width=True)
 
 
 def load_pretrained_model(filename):
@@ -52,7 +68,9 @@ def xgb_model(X_train, y_train):
     return model
 
 
-def present_prediction(model, input):
+def present_prediction(model, input, scaler=None):
+    if scaler:
+        input = scaler.transform(input)
     pred = model.predict(input)
     if pred == 0:
         st.header("Prediction: No Stroke!")

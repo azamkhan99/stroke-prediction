@@ -17,6 +17,7 @@ import joblib
 from imblearn.ensemble import BalancedRandomForestClassifier
 from feature_engine.encoding import OneHotEncoder as fe_OneHotEncoder
 
+from utils.helpers import load_pretrained_model
 
 # def create_input_features():
 
@@ -170,7 +171,10 @@ if selected == "Random Forest Classifier":
 
 
 elif selected == "Support Vector Machine":
-    st.text("...")
+    model = load_pretrained_model("models/svm.pkl")
+    scaler = load_pretrained_model("models/scaler.pkl")
+    st.write("Transformed datapoint", inpu)
+    present_prediction(model, inpu)
 elif selected == "XGBoost":
     st.text("...")
 elif selected == "Trained Logistic Regression":
