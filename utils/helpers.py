@@ -24,7 +24,7 @@ def plot_metrics(metrics_list, model, x_test, y_test, scaler=None):
 
         if "Confusion Matrix" in metrics_list:
             st.subheader("Confusion Matrix")
-            plot_confusion_matrix(model, x_test, y_test)
+            plot_confusion_matrix(model, x_test, y_test, colorbar=False, cmap="YlGn")
             st.pyplot()
 
     with col2:
