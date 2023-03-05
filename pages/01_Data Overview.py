@@ -82,7 +82,7 @@ if uploaded_file is not None:
 
         st.markdown("#### Feature Correlation")
 
-        fig = plt.figure(figsize=(8, 5))
+        fig = plt.figure(figsize=(10, 5))
 
         # Compute correlations
         corr = dataframe.corr()
@@ -128,7 +128,7 @@ st.markdown("## 2. Initial Observations")
 st.markdown(
     """### 2.1. Age
 
-Medical research has demonstrated that aging is the most robust non-modifiable risk factor for incident stroke, which doubles every 10 years after age 55 years. Approximately three-quarters of all strokes occur in persons aged ≥65 years. This is reflected within the stroke dataset, with the modal age of stroke incidence being :green[71], as opposed to :green[43] for non-strokes. Thus, :green[age proved to be the strongest predictor] out of all baseline features.
+Medical research has demonstrated that aging is the most robust non-modifiable risk factor for incident stroke, which doubles every 10 years after age 55 years. Approximately three-quarters of all strokes occur in persons aged ≥65 years. This is reflected within the stroke dataset, with the modal age of stroke incidence being :green[78], as opposed to :green[52] for non-strokes. Thus, :green[age proved to be the strongest predictor] out of all baseline features.
 """
 )
 
@@ -214,6 +214,7 @@ if uploaded_file is not None:
     Similarly, a correlation was detected between marriage and stroke-risk. Upon further inspection, this can be explained by the age distrubtion between the married and unmarried subsets, with the median age of a non-married patient being 18, as compared to a median age of 54 for the married subset.
     """
     )
+
 
 # -----------------------2.2 BMI---------------------------------------------------------------------
 st.markdown("### 2.2. BMI")
@@ -326,6 +327,7 @@ if uploaded_file is not None:
                 d_colours("green_3"),
             },
             errcolor="grey",
+            ci = None
         )
 
         plt.ylabel("Stroke Frequency")
@@ -456,12 +458,11 @@ if uploaded_file is not None:
             hue="hypertension",
             palette={d_colours("d_green"), d_colours("green_3")},
             errcolor="grey",
+            ci = None
         )
 
         plt.ylabel("Stroke Frequency")
-
-        # plt.legend(labels = ['Hypertension','No Hypertension'])
-
+        plt.legend(labels = ['No Hypertension','Hypertension'],bbox_to_anchor=(1.1, 1.1))
         st.pyplot(fig)
 
     with col2:
@@ -477,10 +478,13 @@ if uploaded_file is not None:
             hue="heart_disease",
             palette={d_colours("d_green"), d_colours("green_3")},
             errcolor="grey",
+            ci = None
         )
 
+        plt.legend(labels = ['No Hypertension','Hypertension'],bbox_to_anchor=(1.1, 1.1))
         plt.ylabel("Stroke Frequency")
         st.pyplot(fig)
+
 
 # if uploaded_file is not None:
 
@@ -549,6 +553,7 @@ if uploaded_file is not None:
             d_colours("green_3"),
             },
             errcolor="grey",
+            ci = None
         )
 
         plt.xlabel("Smoking Status")
