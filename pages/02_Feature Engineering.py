@@ -50,11 +50,6 @@ d_colours = lambda x: enmax_palette[color_codes_wanted.index(x)]
 st.title("Feature Engineering")
 
 # Split into Train and Test Data
-st.markdown(
-    """
-    Splitting dataset into train and test to prevent information leaking during feature engineering processes, which may lead to overfitting while modeling.
-"""
-)
 
 X = df.drop(["stroke"], axis=1)
 y = df["stroke"]
@@ -63,21 +58,20 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=0, shuffle=True
 )
 
-st.write(f"- Shape of X_train: {X_train.shape}")
-st.write(f"- Shape of X_test: {X_test.shape}")
+see_data = st.expander("Split into train and test 👉")
+with see_data:
+    st.write(f"- X_train: {X_train.shape}")
+    st.write(f"- X_test: {X_test.shape}")
 
-st.markdown(
-    """
-    Check the percentage of stroke cases in train and test data:
-"""
-)
+see_data = st.expander("Stroke cases in train and test 👉")
+with see_data:
 
-st.write(
-    f"- Stroke cases in y_train: {round(y_train.value_counts()[1]/len(y_train),3)*100}%"
-)
-st.write(
-    f"- Stroke cases in y_test: {round(y_test.value_counts()[1]/len(y_test),3)*100}%"
-)
+    st.write(
+        f"- y_train: {round(y_train.value_counts()[1]/len(y_train),3)*100}%"
+    )
+    st.write(
+        f"- y_test: {round(y_test.value_counts()[1]/len(y_test),3)*100}%"
+    )
 
 # Create 3 buttons to navigate between 'Categorical Variable Encoding', 'Handling Outliers', 'Deal with Missing Values'
 selected = option_menu(
@@ -85,7 +79,7 @@ selected = option_menu(
     options=[
         "Categorical Variable Encoding",
         "Handling Outliers",
-        "Deal with Missing Values",
+        "Deal with Missing Value",
     ],
     icons=["check-circle-fill", "exclamation-circle-fill", "question-circle-fill"],
     orientation="horizontal",
@@ -93,14 +87,16 @@ selected = option_menu(
 
 ###########################'Categorical Variable Encoding'###################################
 if selected == "Categorical Variable Encoding":
-    st.subheader(f"{selected}")
+    #st.subheader(f"{selected}")
 
     # Display text
 
-    st.markdown(
+
+    
+    see_data = st.expander("Apply **One Hot Encoding** to the following columns")
+    with see_data:
+                st.markdown(
         """
-        Use **One Hot Encoding** to capture categorical label information for better visualization presentation.
-        It applies to the following categorical feature variables:
         - gender
         - ever_married
         - work_type
@@ -126,31 +122,22 @@ if selected == "Categorical Variable Encoding":
     if "X_test" not in st.session_state:
         st.session_state.X_test = X_test
 
-    st.markdown("Check out the data after one hot encoding:")
+    st.markdown("After one hot encoding:")
     st.write(X_train.head())
 
 
 ##########################################'Handling Outliers'##############################
 if selected == "Handling Outliers":
-    st.subheader(f"{selected}")
-    st.markdown(
-        """
-        There are two feature variables contain outliers:
-
-        - bmi
-        - avg_glucose_level
-"""
-    )
+    #st.subheader(f"{selected}")
+    
 
     ######################Handling Outliers for bmi##########################################
     st.markdown(
         """
         #### Handling Outliers for bmi
-
-        It is observed that bmi is skewed with outliers at the right-hand tail.
-"""
+    """
     )
-
+      
     def diagnostic_plots(df, variable):
 
         # define figure size
@@ -178,15 +165,6 @@ if selected == "Handling Outliers":
     st.set_option("deprecation.showPyplotGlobalUse", False)  # ignore warning
     st.pyplot(diagnostic_plots(X_train, "bmi"))
 
-    st.markdown(
-        """
-        Replace outliers with maximum allowed values with **Capping** method.
-
-        Replace outliers with median/mean is another option, but it could lose the representation of the population with large BMI in the model.
-
-        *Note: When doing capping, we tend to cap values both in train and test set. It is important to remember that the capping values MUST be derived from the train set. And then use those same values to cap the variables in the test set.*
-"""
-    )
 
     def find_skewed_boundaries(df, variable, distance):
 
@@ -207,21 +185,30 @@ if selected == "Handling Outliers":
         if a > ulbmi2:
             bmi_outlier1 += 1
 
-    st.write(
+    
+
+
+
+    see_data = st.expander("Apply **Capping** to handle outliers")
+    with see_data:
+         st.write('Replace outliers with maximum allowable value')
+         st.write(
         f"The upper bound is found to be **{ulbmi1}**, with **{bmi_outlier}** outliers, which covers the majority of population, including extreme obesity population shown as below:"
     )
-
-    image = Image.open("Images/body-mass-index-bmi-chart.jpg")
-    st.image(image, caption="Body Mass Index Classes")
-
-    # image = image = Image.open("Images/bmi-chart.png")
-    # st.image(image, caption="Body Mass Index Chart")
-
-    st.markdown(
+         image = Image.open("Images/body-mass-index-bmi-chart.jpg")
+         st.image(image, caption="Body Mass Index Classes")
+    
+         st.markdown(
         """
-        After replacing outliers with the upper limit defined previously, there are no more outliers.
+
+        Replace outliers with median/mean is another option, but it could lose the representation of the population with large BMI in the model.
+
+        *Note: When doing capping, we tend to cap values both in train and test set. It is important to remember that the capping values MUST be derived from the train set. And then use those same values to cap the variables in the test set.*
 """
     )
+        
+  
+    
     bmi_upper_limit = find_skewed_boundaries(X_train, "bmi", 1.5)
     X_train["bmi"] = np.where(
         X_train["bmi"] > bmi_upper_limit, bmi_upper_limit, X_train["bmi"]
@@ -241,20 +228,18 @@ if selected == "Handling Outliers":
     st.markdown(
         """
         #### Handling Outliers for avg_glucose_level
-
-        It is observed that avg_glucose_level has a dense group of outliers at the right-hand tile.
-
-
 """
     )
 
     st.set_option("deprecation.showPyplotGlobalUse", False)  # ignore warning
     st.pyplot(diagnostic_plots(X_train, "avg_glucose_level"))
 
-    st.markdown(
+    see_data = st.expander("Apply **Binning** to handle outliers")
+    with see_data:
+         st.markdown(
         """
         **Binning** helps handle outliers by placing these values into the lower or higher intervals, which allows the right-tail dense group to be represented in the general population.
-        Based on domain knowledge, the following bins are advised by doctors:
+        Based on domain knowledge, average glucose level are grouped as following :
         - Low: <90
         - Normal: 90 - 160
         - High: 161 - 230
@@ -290,17 +275,17 @@ if selected == "Handling Outliers":
     )
     st.pyplot(fig)
 
+    st.markdown('''
+    The grouped avg_glucose_level is now a categorical variable, which also needs to be encoded as numerical representation.
+    '''
+    )
+
     col1, col2 = st.columns(2, gap="large")
     with col1:
-        st.markdown(
-            """
-            ## Ordinal Encoding
-            The grouped avg_glucose_level is now a categorical variable, which also needs to be encoded as numerical representation.
-
-            Apply **Ordinal Encoding** to preserve the ranking characteristic. Compare avg_glucose_level before and after ordinal encoding:
-
-    """
-        )
+        see_data = st.expander("Before **Ordinal Encoding** ")
+        with see_data:
+            
+            st.write(X_train[["avg_glucose_level", "avg_glucose_level_ranked"]].head(20))
 
     with col2:
         # set up the encoder
@@ -317,15 +302,20 @@ if selected == "Handling Outliers":
         X_train = encoder.transform(X_train)
         X_test = encoder.transform(X_test)
 
-        st.write(X_train[["avg_glucose_level", "avg_glucose_level_ranked"]].head(20))
+
+        see_data = st.expander("After **Ordinal Encoding** ")
+        with see_data:
+            
+            st.write(X_train[["avg_glucose_level", "avg_glucose_level_ranked"]].head(20))
+        #st.write(X_train[["avg_glucose_level", "avg_glucose_level_ranked"]].head(20))
 
         st.session_state.X_train = X_train
         st.session_state.X_test = X_test
 
 
 ######################################Deal with Missing Values#######################
-if selected == "Deal with Missing Values":
-    st.subheader(f"{selected}")
+if selected == "Deal with Missing Value":
+    #st.subheader(f"{selected}")
 
     st.markdown(
         """
@@ -337,10 +327,11 @@ if selected == "Deal with Missing Values":
     bmi_all = df.shape[0]
 
     st.write(
-        f"*Recall*: There are **{round((bmi_na/bmi_all),3)*100}%** missing value in bmi"
+        f"There are **{round((bmi_na/bmi_all),3)*100}%** missing value in bmi"
     )
-
-    st.markdown(
+    see_data = st.expander("Apply **Median Imputation** to handle missing value")
+    with see_data:
+        st.markdown(
         """
         Following imputation methods are tested based on AUC score:
 
@@ -348,21 +339,20 @@ if selected == "Deal with Missing Values":
         - Median Imputation
         - Multivariate imputation with KNN
 
-        In summary, univariate imputation (median/mean) and multivariate imputation (KNN) return approximately the same performance, with training ROC-AUC score around 97%. **Univariate imputation** was selected to avoid introducing additional complexity.
+        In summary, univariate imputation (median/mean) and multivariate imputation (KNN) return similar performance. **Univariate imputation** was selected to avoid introducing additional complexity.
 
         *Note: The imputation values (that is the median/mean) should be calculated using the training set, and the same value should be used to impute the test set. This is to avoid overfitting.*
 
 """
     )
+        
     X_train = st.session_state.X_train
 
     X_test = st.session_state.X_test
 
     mean = np.round(X_train.bmi.mean(), 1)
     median = np.round(X_train.bmi.median(), 1)
-    st.write(
-        f"Median and Median calculated from training set are {mean}, {median} respectively"
-    )
+    
 
     variance = round(X_train["bmi"].var(), 2)
 
@@ -370,10 +360,17 @@ if selected == "Deal with Missing Values":
     X_train["bmi_median"] = X_train["bmi"].fillna(median)
     variance_mean = round(X_train["bmi_mean"].var(), 2)
     variance_median = round(X_train["bmi_median"].var(), 2)
+    
+    see_data = st.expander("More information for Mean, Median and Variance")
+    with see_data:
 
-    st.write(
-        f"Variance before imputation, after mean and median imputaion are {variance}, {variance_mean}, {variance_median} repectively, where median variance is slightly closer to the original variance"
-    )
+        st.write(f"Mean: {mean}")
+        st.write(f"Median: {median}")
+        st.write("Variance")
+        st.write(f"Before Imputation: {variance}")
+        st.write(f"After Mean Imputation: {variance_mean}")
+        st.write(f"After Median Imputation: {variance_median}")
+        
 
     # check distibution for bmi before imputation
     fig = px.histogram(
