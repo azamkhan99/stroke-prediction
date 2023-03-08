@@ -14,6 +14,11 @@ import json
 import requests
 from streamlit_lottie import st_lottie
 
+#Must be called once only as the first streamlit command 
+st.set_page_config(#page_title='Stroke Prediction', 
+                   layout="wide",  
+                   page_icon=Image.open("Images/logo.png"))
+
 
 ########################'Define Colours'##############################
 enmax_palette = ["#86BC25", "#C4D600", "#43B02A", "#2C5234"]
@@ -35,23 +40,21 @@ def load_lottieurl(url: str):
     return r.json()
 
 
-st.set_page_config(layout="wide")
-
 # Sidebar setup
 st.sidebar.title("Begin by uploading a dataset")
 
 use_sample_data = st.sidebar.radio(
-    "", ("Use Sample Data", "Upload a file containing data"), index=1
+    "", ("Use Sample Dataset", "Upload Custom CVS File"), index=1
 )
 
-if use_sample_data == "Use Sample Data":
+if use_sample_data == "Use Sample Dataset":
     upload_file = pd.read_csv("Data/healthcare-dataset-stroke-data.csv")
     df = upload_file
     df.drop("id", axis=1, inplace=True)
     st.session_state["df"] = df
 
 
-elif use_sample_data == "Upload a file containing data":
+elif use_sample_data == "Upload Custom CVS File":
 
     upload_file = st.sidebar.file_uploader("")
 
@@ -65,7 +68,7 @@ elif use_sample_data == "Upload a file containing data":
 image = Image.open("Images/deloitte.png")
 logo = Image.open("Images/logo.png")
 
-col1, col2, col3, col4 = st.columns((1, 1, 3, 2))
+col1, col2, col3, col4 = st.columns((1, 1, 5, 2))
 
 with col1:
     st.image(image, use_column_width=True)
@@ -74,7 +77,7 @@ with col2:
     st.image(logo ,use_column_width=True)
     
 with col3:
-    st.title("Stroke Prediction")
+    #st.title("Stroke Prediction")
     lottie_hello = load_lottiefile("animations/welcome.json")
     st_lottie(
         lottie_hello,
@@ -82,23 +85,46 @@ with col3:
         reverse=False,
         loop=True,
         quality="low",  # medium ; high
-        height=100,
-        width=320,
+        height=200,
+        width=300,
         key=None,
     )
 
+# Add a title and intro text
+
+
+
 if upload_file is None:
-    st.markdown("Upload a csv or select a sample dataset")
+
+    st.subheader("An application for fast and easy data processing, visualisation and real-time stroke prediction.")
+
+    see_data = st.expander("Disclaimer")
+    with see_data:
+        st.markdown(
+        """
+
+        ⚠️**Warning**: This application is designed for skill developement, which does not provide any clinical recommendations.
+
+        *Note:
+        This demo uses publically available data from Kaggle and prediction is based on ML models that are previously trained on sample data.
+
+    """
+    )
+        link = "[Data Source](https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset)"
+        st.markdown(link, unsafe_allow_html=True)
+
+    st.markdown("Upload a csv or use sample dataset")
+
 else:
 
     row6_spacer1, row6_1, row6_spacer2 = st.columns((0.2, 7.1, 0.2))
-    with row6_1:
-        st.subheader("Currently selected data")
+    #with row6_1:
+        #st.subheader("Currently selected data")
 
     row3_spacer1, row3_1, row3_spacer2 = st.columns((0.2, 7.1, 0.2))
     with row3_1:
         st.markdown("")
-        see_data = st.expander("You can click here to see the raw data first 👉")
+        see_data = st.expander("Click to see sample dataset first 👉")
         with see_data:
             st.dataframe(data=df)
     st.text("")
@@ -153,19 +179,10 @@ else:
         )
         st.plotly_chart(fig)
 
-    # Add a title and intro text
+    position0, position1, position2 = st.columns((0.25,7,3))
 
-    st.markdown(
-        """
-        This web-application allows user to add new samples and upload a file with custom dataset for real-time stroke prediction.
-
-        ⚠️This app is designed for skill developement and does not provide any clinical recommendations!
-
-        *Note:
-        This demo uses publically available data from Kaggle and prediction is based on ML models that are previously trained on sample data.
-
-    """
-    )
-
-    link = "[Data Source](https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset)"
-    st.markdown(link, unsafe_allow_html=True)
+    with position1:
+        see_data = st.expander("Woking Group 💗")
+        with see_data:
+            image = Image.open("Images/Team Structure.png")
+            st.image(image)
