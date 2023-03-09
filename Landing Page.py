@@ -14,9 +14,9 @@ import json
 import requests
 from streamlit_lottie import st_lottie
 
-#Must be called once only as the first streamlit command 
-st.set_page_config(#page_title='Stroke Prediction', 
-                   layout="wide",  
+#Must be called once only as the first streamlit command
+st.set_page_config(#page_title='Stroke Prediction',
+                   layout="wide",
                    page_icon=Image.open("Images/logo.png"))
 
 
@@ -44,7 +44,7 @@ def load_lottieurl(url: str):
 st.sidebar.title("Begin by uploading a dataset")
 
 use_sample_data = st.sidebar.radio(
-    "", ("Use Sample Dataset", "Upload Custom CVS File"), index=1
+    "", ("Use Sample Dataset", "Upload Custom CSV File"), index=1
 )
 
 if use_sample_data == "Use Sample Dataset":
@@ -54,7 +54,7 @@ if use_sample_data == "Use Sample Dataset":
     st.session_state["df"] = df
 
 
-elif use_sample_data == "Upload Custom CVS File":
+elif use_sample_data == "Upload Custom CSV File":
 
     upload_file = st.sidebar.file_uploader("")
 
@@ -75,7 +75,7 @@ with col1:
 
 with col2:
     st.image(logo ,use_column_width=True)
-    
+
 with col3:
     #st.title("Stroke Prediction")
     lottie_hello = load_lottiefile("animations/welcome.json")

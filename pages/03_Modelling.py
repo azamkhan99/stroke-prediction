@@ -1,7 +1,7 @@
 # streamlit packages
 import streamlit as st
 from streamlit_option_menu import option_menu
-from utils.helpers import plot_metrics, load_pretrained_model, xgb_model
+from utils.helpers import plot_metrics, load_pretrained_model, xgb_model, pr_comparison
 import joblib
 
 # import basic packages
@@ -43,29 +43,36 @@ X_train = X_train[relevant_columns]
 X_test = X_test[relevant_columns]
 
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs(
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
     [
         "XGBoost",
         "Random Forests",
         "SVMs",
         "Neural Network",
         "Train a Logistic Regression",
+        "Model Comparison"
     ]
 )
 
 with tab1:
-    # model = xgb_model(X_train, y_train)
-    # plot_metrics(
-    #     metrics_list=["Confusion Matrix", "ROC Curve", "Precision-Recall Curve"],
-    #     model=model,
-    #     x_test=X_test,
-    #     y_test=y_test,
-    # )
+    with st.expander("More information"):
+        st.image("Images/xgb_params.png")
+    #model = xgb_model(X_train, y_train)
+    model = load_pretrained_model("models/xgb.joblib")
+    plot_metrics(
+        metrics_list=["Confusion Matrix", "ROC Curve", "Precision-Recall Curve"],
+        model=model,
+        x_test=X_test,
+        y_test=y_test,
+    )
     with st.expander("More information"):
         st.image("Images/xgb_params.png")
 
     st.header("Results")
     st.write("not implemented")
+
+
+
 
 with tab2:
     with st.expander("More information"):
@@ -105,9 +112,9 @@ with tab3:
 
 with tab4:
     with st.expander("More information"):
-        st.image("Images/svms.png")
+        st.write("more info")
     st.header("Results")
-    model = load_pretrained_model("models/nn.h5")
+    #model = load_pretrained_model("models/nn.h5")
     plot_metrics(
         metrics_list=[
             "Confusion Matrix",
@@ -155,3 +162,6 @@ with tab5:
             x_test=X_test,
             y_test=y_test,
         )
+
+with tab6:
+    pr_comparison(X_test, y_test)

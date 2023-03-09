@@ -8,9 +8,22 @@ import streamlit as st
 import joblib
 import pickle
 import pandas as pd
-
+import matplotlib.pyplot as plt
+import xgboost as xgb
 # from tensorflow import keras
 # from keras.models import load_model
+
+def pr_comparison(x_test, y_test):
+
+
+
+    fig, ax = plt.subplots()
+    PrecisionRecallDisplay.from_estimator(load_pretrained_model('models/balanced_randomforest.joblib'),x_test, y_test, pos_label=1, ax=ax)
+    PrecisionRecallDisplay.from_estimator(load_pretrained_model('models/trained_lr.joblib'),x_test, y_test, pos_label=1, ax=ax)
+    PrecisionRecallDisplay.from_estimator(load_pretrained_model('models/svm.pkl'),load_pretrained_model('models/scaler.pkl').transform(x_test), y_test, pos_label=1, ax=ax)
+    PrecisionRecallDisplay.from_estimator(load_pretrained_model('models/xgb.joblib'),x_test, y_test, pos_label=1, ax=ax)
+
+    st.pyplot()
 
 
 def plot_metrics(metrics_list, model, x_test, y_test, scaler=None):
@@ -59,7 +72,7 @@ def load_pretrained_model(filename):
 
 
 def xgb_model(X_train, y_train):
-    model = XGBClassifier(
+    model = xgb.XGBClassifier(
         scale_pos_weight=17,
         n_estimators=200,
         learning_rate=0.01,

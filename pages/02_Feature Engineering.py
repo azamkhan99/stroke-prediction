@@ -92,7 +92,7 @@ if selected == "Categorical Variable Encoding":
     # Display text
 
 
-    
+
     see_data = st.expander("Apply **One Hot Encoding** to the following columns")
     with see_data:
                 st.markdown(
@@ -129,7 +129,7 @@ if selected == "Categorical Variable Encoding":
 ##########################################'Handling Outliers'##############################
 if selected == "Handling Outliers":
     #st.subheader(f"{selected}")
-    
+
 
     ######################Handling Outliers for bmi##########################################
     st.markdown(
@@ -137,7 +137,7 @@ if selected == "Handling Outliers":
         #### Handling Outliers for bmi
     """
     )
-      
+
     def diagnostic_plots(df, variable):
 
         # define figure size
@@ -185,7 +185,7 @@ if selected == "Handling Outliers":
         if a > ulbmi2:
             bmi_outlier1 += 1
 
-    
+
 
 
 
@@ -197,7 +197,7 @@ if selected == "Handling Outliers":
     )
          image = Image.open("Images/body-mass-index-bmi-chart.jpg")
          st.image(image, caption="Body Mass Index Classes")
-    
+
          st.markdown(
         """
 
@@ -206,9 +206,9 @@ if selected == "Handling Outliers":
         *Note: When doing capping, we tend to cap values both in train and test set. It is important to remember that the capping values MUST be derived from the train set. And then use those same values to cap the variables in the test set.*
 """
     )
-        
-  
-    
+
+
+
     bmi_upper_limit = find_skewed_boundaries(X_train, "bmi", 1.5)
     X_train["bmi"] = np.where(
         X_train["bmi"] > bmi_upper_limit, bmi_upper_limit, X_train["bmi"]
@@ -284,7 +284,7 @@ if selected == "Handling Outliers":
     with col1:
         see_data = st.expander("Before **Ordinal Encoding** ")
         with see_data:
-            
+
             st.write(X_train[["avg_glucose_level", "avg_glucose_level_ranked"]].head(20))
 
     with col2:
@@ -305,7 +305,7 @@ if selected == "Handling Outliers":
 
         see_data = st.expander("After **Ordinal Encoding** ")
         with see_data:
-            
+
             st.write(X_train[["avg_glucose_level", "avg_glucose_level_ranked"]].head(20))
         #st.write(X_train[["avg_glucose_level", "avg_glucose_level_ranked"]].head(20))
 
@@ -314,7 +314,7 @@ if selected == "Handling Outliers":
 
 
 ######################################Deal with Missing Values#######################
-if selected == "Deal with Missing Value":
+if selected == "Deal with Missing Values":
     #st.subheader(f"{selected}")
 
     st.markdown(
@@ -345,14 +345,14 @@ if selected == "Deal with Missing Value":
 
 """
     )
-        
+
     X_train = st.session_state.X_train
 
     X_test = st.session_state.X_test
 
     mean = np.round(X_train.bmi.mean(), 1)
     median = np.round(X_train.bmi.median(), 1)
-    
+
 
     variance = round(X_train["bmi"].var(), 2)
 
@@ -360,7 +360,7 @@ if selected == "Deal with Missing Value":
     X_train["bmi_median"] = X_train["bmi"].fillna(median)
     variance_mean = round(X_train["bmi_mean"].var(), 2)
     variance_median = round(X_train["bmi_median"].var(), 2)
-    
+
     see_data = st.expander("More information for Mean, Median and Variance")
     with see_data:
 
@@ -370,7 +370,7 @@ if selected == "Deal with Missing Value":
         st.write(f"Before Imputation: {variance}")
         st.write(f"After Mean Imputation: {variance_mean}")
         st.write(f"After Median Imputation: {variance_median}")
-        
+
 
     # check distibution for bmi before imputation
     fig = px.histogram(

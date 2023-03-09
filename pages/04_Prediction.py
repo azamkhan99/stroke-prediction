@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from utils.helpers import present_prediction
+from utils.helpers import present_prediction, pr_comparison
 
 # user-interactive visulization with plotly
 import plotly.express as px
@@ -128,6 +128,7 @@ st.sidebar.button(
         age,
     ),
 )
+
 
 st.write("Custom datapoint", st.session_state.datapoint)
 
