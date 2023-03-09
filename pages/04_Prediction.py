@@ -145,16 +145,7 @@ selected = option_menu(
 )
 
 inpu = st.session_state.datapoint
-inpu = st.session_state.ohe_enc.transform(inpu)
-inpu["avg_glucose_level_ranked"] = pd.cut(
-    inpu["avg_glucose_level"],
-    bins=[0, 90, 160, 230, 500],
-    labels=["Low", "Normal", "High", "Very High"],
-)
-# fit the encoder
-inpu = st.session_state.encoder.transform(inpu)
-inpu.drop("avg_glucose_level_ranked", axis=1, inplace=True)
-inpu["bmi"] = inpu.pop("bmi")
+
 
 # transform the data
 
@@ -162,23 +153,35 @@ inpu["bmi"] = inpu.pop("bmi")
 if "inpu" not in st.session_state:
     st.session_state.inpu = inpu
 
+if type(inpu) == pd.DataFrame:
 
-if selected == "Random Forest Classifier":
-    model = joblib.load("models/balanced_randomforest.joblib")
+    inpu = st.session_state.ohe_enc.transform(inpu)
+    inpu["avg_glucose_level_ranked"] = pd.cut(
+        inpu["avg_glucose_level"],
+        bins=[0, 90, 160, 230, 500],
+        labels=["Low", "Normal", "High", "Very High"],
+    )
+    # fit the encoder
+    inpu = st.session_state.encoder.transform(inpu)
+    inpu.drop("avg_glucose_level", axis=1, inplace=True)
+    inpu["bmi"] = inpu.pop("bmi")
 
-    st.write("Transformed datapoint", inpu)
-    present_prediction(model, inpu)
+    if selected == "Random Forest Classifier":
+        model = joblib.load("models/balanced_randomforest.joblib")
+
+        st.write("Transformed datapoint", inpu)
+        present_prediction(model, inpu)
 
 
-elif selected == "Support Vector Machine":
-    model = load_pretrained_model("models/svm.pkl")
-    scaler = load_pretrained_model("models/scaler.pkl")
-    st.write("Transformed datapoint", inpu)
-    present_prediction(model, inpu)
-elif selected == "XGBoost":
-    st.text("...")
-elif selected == "Trained Logistic Regression":
-    model = joblib.load("models/trained_lr.joblib")
+    elif selected == "Support Vector Machine":
+        model = load_pretrained_model("models/svm.pkl")
+        scaler = load_pretrained_model("models/scaler.pkl")
+        st.write("Transformed datapoint", inpu)
+        present_prediction(model, inpu)
+    elif selected == "XGBoost":
+        st.text("...")
+    elif selected == "Trained Logistic Regression":
+        model = joblib.load("models/trained_lr.joblib")
 
-    st.write("Transformed datapoint", inpu)
-    present_prediction(model, inpu)
+        st.write("Transformed datapoint", inpu)
+        present_prediction(model, inpu)

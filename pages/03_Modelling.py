@@ -5,37 +5,13 @@ from utils.helpers import plot_metrics, load_pretrained_model, xgb_model
 import joblib
 
 # import basic packages
-import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-
-# user-interactive visulization with plotly
-import plotly.express as px
-import plotly.figure_factory as ff
 
 # to split the datasets
-from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
+from sklearn.model_selection import GridSearchCV
 
-# feature engineering imputation
-from feature_engine import imputation as mdi
-
-# for one hot encoding with sklearn
-from sklearn.preprocessing import OneHotEncoder
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, roc_auc_score, plot_confusion_matrix
 
-
-# for encoding with feature-engine
-from feature_engine.encoding import OneHotEncoder as fe_OneHotEncoder
-from feature_engine.encoding import OrdinalEncoder as fe_OrdinalEncoder
-
-# for Q-Q plots
-import scipy.stats as stats
-
-# read images
-from PIL import Image
 
 
 st.title("Modelling")
@@ -67,8 +43,14 @@ X_train = X_train[relevant_columns]
 X_test = X_test[relevant_columns]
 
 
-tab1, tab2, tab3, tab4 = st.tabs(
-    ["XGBoost", "Random Forests", "SVMs", "Train a Logistic Regression"]
+tab1, tab2, tab3, tab4, tab5 = st.tabs(
+    [
+        "XGBoost",
+        "Random Forests",
+        "SVMs",
+        "Neural Network",
+        "Train a Logistic Regression",
+    ]
 )
 
 with tab1:
@@ -121,8 +103,25 @@ with tab3:
         scaler=scaler,
     )
 
-
 with tab4:
+    with st.expander("More information"):
+        st.image("Images/svms.png")
+    st.header("Results")
+    model = load_pretrained_model("models/nn.h5")
+    plot_metrics(
+        metrics_list=[
+            "Confusion Matrix",
+            "ROC Curve",
+            "Precision-Recall Curve",
+            "classification_report",
+        ],
+        model=model,
+        x_test=X_test,
+        y_test=y_test,
+        scaler=scaler,
+    )
+
+with tab5:
     with st.expander("More information"):
         st.write("more info")
 

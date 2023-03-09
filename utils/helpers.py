@@ -1,13 +1,16 @@
 from sklearn.metrics import (
-    plot_confusion_matrix,
-    plot_roc_curve,
-    plot_precision_recall_curve,
+    confusion_matrix, ConfusionMatrixDisplay,
+    RocCurveDisplay,
+    PrecisionRecallDisplay,
     classification_report,
 )
 import streamlit as st
 import joblib
 import pickle
 import pandas as pd
+
+# from tensorflow import keras
+# from keras.models import load_model
 
 
 def plot_metrics(metrics_list, model, x_test, y_test, scaler=None):
@@ -19,18 +22,18 @@ def plot_metrics(metrics_list, model, x_test, y_test, scaler=None):
 
         if "ROC Curve" in metrics_list:
             st.subheader("ROC Curve")
-            plot_roc_curve(model, x_test, y_test)
+            RocCurveDisplay.from_estimator(model, x_test, y_test)
             st.pyplot()
 
         if "Confusion Matrix" in metrics_list:
             st.subheader("Confusion Matrix")
-            plot_confusion_matrix(model, x_test, y_test, colorbar=False, cmap="YlGn")
+            ConfusionMatrixDisplay.from_estimator(model, x_test, y_test, colorbar=False, cmap="YlGn")
             st.pyplot()
 
     with col2:
         if "Precision-Recall Curve" in metrics_list:
             st.subheader("Precision-Recall Curve")
-            plot_precision_recall_curve(model, x_test, y_test)
+            PrecisionRecallDisplay.from_estimator(model, x_test, y_test)
             st.pyplot()
 
         if "classification_report" in metrics_list:
@@ -50,6 +53,8 @@ def load_pretrained_model(filename):
         model = joblib.load(filename)
     elif filename.split(".")[1] == "pkl":
         model = pickle.load(open(filename, "rb"))
+    elif filename.split(".")[1] == "h5":
+        model = load_model("model.h5")
     return model
 
 
