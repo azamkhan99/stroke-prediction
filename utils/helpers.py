@@ -13,17 +13,27 @@ import xgboost as xgb
 # from tensorflow import keras
 # from keras.models import load_model
 
-def pr_comparison(x_test, y_test):
+def pr_comparison(plot_type, x_test, y_test):
+
+    if plot_type == 'pr_curve':
 
 
+        fig, ax = plt.subplots()
+        PrecisionRecallDisplay.from_estimator(load_pretrained_model('models/balanced_randomforest.joblib'),x_test, y_test, pos_label=1, ax=ax)
+        PrecisionRecallDisplay.from_estimator(load_pretrained_model('models/trained_lr.joblib'),x_test, y_test, pos_label=1, ax=ax)
+        PrecisionRecallDisplay.from_estimator(load_pretrained_model('models/svm.pkl'),load_pretrained_model('models/scaler.pkl').transform(x_test), y_test, pos_label=1, ax=ax)
+        PrecisionRecallDisplay.from_estimator(load_pretrained_model('models/xgb.joblib'),x_test, y_test, pos_label=1, ax=ax)
 
-    fig, ax = plt.subplots()
-    PrecisionRecallDisplay.from_estimator(load_pretrained_model('models/balanced_randomforest.joblib'),x_test, y_test, pos_label=1, ax=ax)
-    PrecisionRecallDisplay.from_estimator(load_pretrained_model('models/trained_lr.joblib'),x_test, y_test, pos_label=1, ax=ax)
-    PrecisionRecallDisplay.from_estimator(load_pretrained_model('models/svm.pkl'),load_pretrained_model('models/scaler.pkl').transform(x_test), y_test, pos_label=1, ax=ax)
-    PrecisionRecallDisplay.from_estimator(load_pretrained_model('models/xgb.joblib'),x_test, y_test, pos_label=1, ax=ax)
+        st.pyplot()
 
-    st.pyplot()
+    if plot_type == 'roc_curve':
+        fig, ax = plt.subplots()
+        RocCurveDisplay.from_estimator(load_pretrained_model('models/balanced_randomforest.joblib'),x_test, y_test, pos_label=1, ax=ax)
+        RocCurveDisplay.from_estimator(load_pretrained_model('models/trained_lr.joblib'),x_test, y_test, pos_label=1, ax=ax)
+        RocCurveDisplay.from_estimator(load_pretrained_model('models/svm.pkl'),load_pretrained_model('models/scaler.pkl').transform(x_test), y_test, pos_label=1, ax=ax)
+        RocCurveDisplay.from_estimator(load_pretrained_model('models/xgb.joblib'),x_test, y_test, pos_label=1, ax=ax)
+
+        st.pyplot()
 
 
 def plot_metrics(metrics_list, model, x_test, y_test, scaler=None):

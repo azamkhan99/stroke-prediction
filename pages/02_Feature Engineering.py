@@ -79,7 +79,7 @@ selected = option_menu(
     options=[
         "Categorical Variable Encoding",
         "Handling Outliers",
-        "Deal with Missing Value",
+        "Deal with Missing Values",
     ],
     icons=["check-circle-fill", "exclamation-circle-fill", "question-circle-fill"],
     orientation="horizontal",
@@ -318,9 +318,9 @@ if selected == "Deal with Missing Values":
     #st.subheader(f"{selected}")
 
     st.markdown(
-        """
-        #### Missing Data Imputation for bmi
-"""
+            """
+            #### Missing Data Imputation for bmi
+    """
     )
 
     bmi_na = df["bmi"].isna().sum()

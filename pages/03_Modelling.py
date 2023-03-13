@@ -45,90 +45,16 @@ X_test = X_test[relevant_columns]
 
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
     [
+        "Train a Logistic Regression",
+        "Random Forest",
         "XGBoost",
-        "Random Forests",
         "SVMs",
         "Neural Network",
-        "Train a Logistic Regression",
         "Model Comparison"
     ]
 )
 
 with tab1:
-    with st.expander("More information"):
-        st.image("Images/xgb_params.png")
-    #model = xgb_model(X_train, y_train)
-    model = load_pretrained_model("models/xgb.joblib")
-    plot_metrics(
-        metrics_list=["Confusion Matrix", "ROC Curve", "Precision-Recall Curve"],
-        model=model,
-        x_test=X_test,
-        y_test=y_test,
-    )
-    with st.expander("More information"):
-        st.image("Images/xgb_params.png")
-
-    st.header("Results")
-    st.write("not implemented")
-
-
-
-
-with tab2:
-    with st.expander("More information"):
-        st.image("Images/rf_features.png")
-    st.header("Results")
-    model = load_pretrained_model("models/balanced_randomforest.joblib")
-    plot_metrics(
-        metrics_list=[
-            "Confusion Matrix",
-            "ROC Curve",
-            "Precision-Recall Curve",
-            "classification_report",
-        ],
-        model=model,
-        x_test=X_test,
-        y_test=y_test,
-    )
-
-with tab3:
-    with st.expander("More information"):
-        st.image("Images/svms.png")
-    st.header("Results")
-    model = load_pretrained_model("models/svm.pkl")
-    scaler = load_pretrained_model("models/scaler.pkl")
-    plot_metrics(
-        metrics_list=[
-            "Confusion Matrix",
-            "ROC Curve",
-            "Precision-Recall Curve",
-            "classification_report",
-        ],
-        model=model,
-        x_test=X_test,
-        y_test=y_test,
-        scaler=scaler,
-    )
-
-with tab4:
-    with st.expander("More information"):
-        st.write("more info")
-    st.header("Results")
-    #model = load_pretrained_model("models/nn.h5")
-    plot_metrics(
-        metrics_list=[
-            "Confusion Matrix",
-            "ROC Curve",
-            "Precision-Recall Curve",
-            "classification_report",
-        ],
-        model=model,
-        x_test=X_test,
-        y_test=y_test,
-        scaler=scaler,
-    )
-
-with tab5:
     with st.expander("More information"):
         st.write("more info")
 
@@ -163,5 +89,80 @@ with tab5:
             y_test=y_test,
         )
 
+with tab2:
+    with st.expander("More information"):
+        st.image("Images/rf_features.png")
+    st.header("Results")
+    model = load_pretrained_model("models/balanced_randomforest.joblib")
+    plot_metrics(
+        metrics_list=[
+            "Confusion Matrix",
+            "ROC Curve",
+            "Precision-Recall Curve",
+            "classification_report",
+        ],
+        model=model,
+        x_test=X_test,
+        y_test=y_test,
+    )
+
+with tab3:
+    with st.expander("More information"):
+        st.image("Images/xgb_params.png")
+    #model = xgb_model(X_train, y_train)
+    st.header("Results")
+    model = load_pretrained_model("models/xgb.joblib")
+    plot_metrics(
+        metrics_list=["Confusion Matrix", "ROC Curve", "Precision-Recall Curve"],
+        model=model,
+        x_test=X_test,
+        y_test=y_test,
+    )
+
+
+
+
+
+
+with tab4:
+    with st.expander("More information"):
+        st.image("Images/svms.png")
+    st.header("Results")
+    model = load_pretrained_model("models/svm.pkl")
+    scaler = load_pretrained_model("models/scaler.pkl")
+    plot_metrics(
+        metrics_list=[
+            "Confusion Matrix",
+            "ROC Curve",
+            "Precision-Recall Curve",
+            "classification_report",
+        ],
+        model=model,
+        x_test=X_test,
+        y_test=y_test,
+        scaler=scaler,
+    )
+
+with tab5:
+    with st.expander("More information"):
+        st.write("more info")
+    st.header("Results")
+    #model = load_pretrained_model("models/nn.h5")
+    plot_metrics(
+        metrics_list=[
+            "Confusion Matrix",
+            "ROC Curve",
+            "Precision-Recall Curve",
+            "classification_report",
+        ],
+        model=model,
+        x_test=X_test,
+        y_test=y_test,
+        scaler=scaler,
+    )
+
+
+
 with tab6:
-    pr_comparison(X_test, y_test)
+    pr_comparison(plot_type='pr_curve',x_test=X_test, y_test=y_test)
+    pr_comparison(plot_type='roc_curve', x_test=X_test, y_test=y_test)
