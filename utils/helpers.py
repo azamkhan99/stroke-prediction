@@ -19,20 +19,22 @@ def pr_comparison(plot_type, x_test, y_test):
 
 
         fig, ax = plt.subplots()
-        PrecisionRecallDisplay.from_estimator(load_pretrained_model('models/balanced_randomforest.joblib'),x_test, y_test, pos_label=1, ax=ax)
         PrecisionRecallDisplay.from_estimator(load_pretrained_model('models/trained_lr.joblib'),x_test, y_test, pos_label=1, ax=ax)
-        PrecisionRecallDisplay.from_estimator(load_pretrained_model('models/svm.pkl'),load_pretrained_model('models/scaler.pkl').transform(x_test), y_test, pos_label=1, ax=ax)
+        PrecisionRecallDisplay.from_estimator(load_pretrained_model('models/balanced_randomforest.joblib'),x_test, y_test, pos_label=1, ax=ax)
         PrecisionRecallDisplay.from_estimator(load_pretrained_model('models/xgb.joblib'),x_test, y_test, pos_label=1, ax=ax)
-
+        PrecisionRecallDisplay.from_estimator(load_pretrained_model('models/svm.pkl'),load_pretrained_model('models/scaler.pkl').transform(x_test), y_test, pos_label=1, ax=ax)
+        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.10),fancybox=True, shadow=True)
         st.pyplot()
 
     if plot_type == 'roc_curve':
         fig, ax = plt.subplots()
-        RocCurveDisplay.from_estimator(load_pretrained_model('models/balanced_randomforest.joblib'),x_test, y_test, pos_label=1, ax=ax)
         RocCurveDisplay.from_estimator(load_pretrained_model('models/trained_lr.joblib'),x_test, y_test, pos_label=1, ax=ax)
-        RocCurveDisplay.from_estimator(load_pretrained_model('models/svm.pkl'),load_pretrained_model('models/scaler.pkl').transform(x_test), y_test, pos_label=1, ax=ax)
+        RocCurveDisplay.from_estimator(load_pretrained_model('models/balanced_randomforest.joblib'),x_test, y_test, pos_label=1, ax=ax)
         RocCurveDisplay.from_estimator(load_pretrained_model('models/xgb.joblib'),x_test, y_test, pos_label=1, ax=ax)
-
+        RocCurveDisplay.from_estimator(load_pretrained_model('models/svm.pkl'),load_pretrained_model('models/scaler.pkl').transform(x_test), y_test, pos_label=1, ax=ax)
+        ident = [0.0, 1.0]
+        plt.plot(ident,ident, color='r', ls='--')
+        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.10),fancybox=True, shadow=True)
         st.pyplot()
 
 
@@ -103,4 +105,4 @@ def present_prediction(model, input, scaler=None):
     if pred == 0:
         st.header("Prediction: No Stroke!")
     elif pred == 1:
-        st.header("Prediction: STROKE")
+        st.header("Prediction: STROKE - Further consultation advised.")

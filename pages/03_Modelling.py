@@ -3,6 +3,7 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 from utils.helpers import plot_metrics, load_pretrained_model, xgb_model, pr_comparison
 import joblib
+import matplotlib.pyplot as plt
 
 # import basic packages
 import numpy as np
@@ -50,7 +51,7 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
         "XGBoost",
         "SVMs",
         "Neural Network",
-        "Model Comparison"
+        "Model Selection"
     ]
 )
 
@@ -164,5 +165,29 @@ with tab5:
 
 
 with tab6:
-    pr_comparison(plot_type='pr_curve',x_test=X_test, y_test=y_test)
-    pr_comparison(plot_type='roc_curve', x_test=X_test, y_test=y_test)
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader("Precision-Recall Curve")
+        pr_comparison(plot_type='pr_curve',x_test=X_test, y_test=y_test)
+    with col2:
+        st.subheader("ROC Curve")
+        pr_comparison(plot_type='roc_curve', x_test=X_test, y_test=y_test)
+
+    st.markdown('''
+    An ROC curve plots TPR vs. FPR at different classification thresholds. Lowering the classification threshold classifies more items as positive, thus increasing both False Positives and True Positives.
+    ''')
+    st.subheader("Classification Threshold vs. Impact on Resources")
+    x_cords = range(0,100)
+    y_cords = [(x-50)**2 + 50 for x in x_cords]
+
+    plt.plot(x_cords, y_cords)
+    plt.xlabel ( 'Stroke Prediction Classification Threshold (%)')
+    plt.box(False)
+    plt.yticks([])
+    plt.xticks([])
+    plt.ylabel ('Cost to NHS')
+    plt.text (-30,2700, 'High False Negative Rate')
+    plt.text(90,2700, 'High False Positive Rate')
+    plt.axvline(50, color='g', linestyle='dashed')
+    plt.text(26, 2800, 'Optimal Threshold Decided Through Business Case', fontsize=6)
+    st.pyplot()
