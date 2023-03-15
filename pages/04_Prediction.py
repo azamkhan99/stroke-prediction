@@ -39,23 +39,6 @@ avg_glucose_level = st.sidebar.slider("Average Glucose Level", 30, 300, 100)
 bmi = st.sidebar.slider("Body Mass Index (BMI)", 1, 100, 20)
 age = st.sidebar.slider("Age", 1, 120, 21)
 
-# data_point = {
-#     "gender": gender,
-#     "age": age,
-#     "hypertension": mapper(hypertension),
-#     "heart_disease": mapper(heart_disease),
-#     "ever_married": mapper(ever_married),
-#     "work_type": work_type,
-#     "residence_type": residence_type,
-#     "avg_glucose_level": avg_glucose_level,
-#     "bmi": bmi,
-#     "smoking_status": smoking_status,
-# }
-# features = pd.DataFrame(data_point, index=[0])
-
-# return features
-
-
 def mapper(string):
     if string == "Yes":
         return 1
@@ -91,23 +74,6 @@ def create_input_features(
 
     st.session_state.datapoint = features
 
-
-# if st.sidebar.button("Submit?"):
-#     features = create_input_features(
-#         gender,
-#         hypertension,
-#         heart_disease,
-#         ever_married,
-#         work_type,
-#         residence_type,
-#         smoking_status,
-#         avg_glucose_level,
-#         bmi,
-#         age,
-#     )
-#     st.markdown("#### Custom datapoint")
-
-
 if "datapoint" not in st.session_state:
     st.session_state.datapoint = " "
 
@@ -136,10 +102,10 @@ st.write("Custom datapoint", st.session_state.datapoint)
 selected = option_menu(
     menu_title=None,
     options=[
-        "Random Forest Classifier",
-        "Support Vector Machine",
-        "XGBoost",
         "Trained Logistic Regression",
+        "Random Forest Classifier",
+        "XGBoost",
+        "Support Vector Machine",
     ],
     # icons = ['house', 'book', 'envelope'],
     orientation="horizontal",
@@ -180,7 +146,9 @@ if type(inpu) == pd.DataFrame:
         st.write("Transformed datapoint", inpu)
         present_prediction(model, inpu)
     elif selected == "XGBoost":
-        st.text("...")
+        model = load_pretrained_model("models/xgb.joblib")
+        st.write("Transformed datapoint", inpu)
+        present_prediction(model, inpu)
     elif selected == "Trained Logistic Regression":
         model = joblib.load("models/trained_lr.joblib")
 

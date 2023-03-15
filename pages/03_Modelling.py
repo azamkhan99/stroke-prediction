@@ -1,12 +1,13 @@
 # streamlit packages
 import streamlit as st
 from streamlit_option_menu import option_menu
-from utils.helpers import plot_metrics, load_pretrained_model, xgb_model, pr_comparison
+from utils.helpers import plot_metrics, plot_nn_metrics, load_pretrained_model, xgb_model, pr_comparison
 import joblib
 import matplotlib.pyplot as plt
 
 # import basic packages
 import numpy as np
+from numpy import genfromtxt
 
 # to split the datasets
 from sklearn.model_selection import GridSearchCV
@@ -114,16 +115,11 @@ with tab3:
     st.header("Results")
     model = load_pretrained_model("models/xgb.joblib")
     plot_metrics(
-        metrics_list=["Confusion Matrix", "ROC Curve", "Precision-Recall Curve"],
+        metrics_list=["Confusion Matrix", "ROC Curve", "Precision-Recall Curve", "classification_report"],
         model=model,
         x_test=X_test,
         y_test=y_test,
     )
-
-
-
-
-
 
 with tab4:
     with st.expander("More information"):
@@ -146,10 +142,12 @@ with tab4:
 
 with tab5:
     with st.expander("More information"):
-        st.write("more info")
+        st.image("Images/nn_arch.png")
     st.header("Results")
-    #model = load_pretrained_model("models/nn.h5")
-    plot_metrics(
+
+    model = genfromtxt('models/predictions.csv', delimiter=',')
+    print(model)
+    plot_nn_metrics(
         metrics_list=[
             "Confusion Matrix",
             "ROC Curve",
@@ -157,9 +155,7 @@ with tab5:
             "classification_report",
         ],
         model=model,
-        x_test=X_test,
         y_test=y_test,
-        scaler=scaler,
     )
 
 
@@ -167,11 +163,13 @@ with tab5:
 with tab6:
     col1, col2 = st.columns(2)
     with col1:
+        y_pred = genfromtxt('models/predictions.csv', delimiter=',')
         st.subheader("Precision-Recall Curve")
-        pr_comparison(plot_type='pr_curve',x_test=X_test, y_test=y_test)
+        pr_comparison(plot_type='pr_curve',x_test=X_test, y_test=y_test, y_pred=y_pred)
     with col2:
+        y_pred = genfromtxt('models/predictions.csv', delimiter=',')
         st.subheader("ROC Curve")
-        pr_comparison(plot_type='roc_curve', x_test=X_test, y_test=y_test)
+        pr_comparison(plot_type='roc_curve', x_test=X_test, y_test=y_test, y_pred=y_pred)
 
     st.markdown('''
     An ROC curve plots TPR vs. FPR at different classification thresholds. Lowering the classification threshold classifies more items as positive, thus increasing both False Positives and True Positives.
