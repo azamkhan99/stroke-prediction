@@ -2,8 +2,9 @@
 
 To launch web-app:
 
-1. Install Streamlit: pip install streamlit
-2. Open folder in Command Line and execute: streamlit run Landing\ Page.py
+1. Create new virtual environment
+2. Install requirements: pip install -r requirements.txt
+3. Open folder in Command Line and execute: streamlit run Landing\ Page.py
 
 Development workflow:
 

@@ -6,6 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from utils.helpers import present_prediction, pr_comparison
+
 # user-interactive visulization with plotly
 import plotly.express as px
 import plotly.figure_factory as ff
@@ -15,6 +17,7 @@ import joblib
 from imblearn.ensemble import BalancedRandomForestClassifier
 from feature_engine.encoding import OneHotEncoder as fe_OneHotEncoder
 
+from utils.helpers import load_pretrained_model
 
 # def create_input_features():
 
@@ -35,23 +38,6 @@ smoking_status = st.sidebar.selectbox(
 avg_glucose_level = st.sidebar.slider("Average Glucose Level", 30, 300, 100)
 bmi = st.sidebar.slider("Body Mass Index (BMI)", 1, 100, 20)
 age = st.sidebar.slider("Age", 1, 120, 21)
-
-# data_point = {
-#     "gender": gender,
-#     "age": age,
-#     "hypertension": mapper(hypertension),
-#     "heart_disease": mapper(heart_disease),
-#     "ever_married": mapper(ever_married),
-#     "work_type": work_type,
-#     "residence_type": residence_type,
-#     "avg_glucose_level": avg_glucose_level,
-#     "bmi": bmi,
-#     "smoking_status": smoking_status,
-# }
-# features = pd.DataFrame(data_point, index=[0])
-
-# return features
-
 
 def mapper(string):
     if string == "Yes":
@@ -88,23 +74,6 @@ def create_input_features(
 
     st.session_state.datapoint = features
 
-
-# if st.sidebar.button("Submit?"):
-#     features = create_input_features(
-#         gender,
-#         hypertension,
-#         heart_disease,
-#         ever_married,
-#         work_type,
-#         residence_type,
-#         smoking_status,
-#         avg_glucose_level,
-#         bmi,
-#         age,
-#     )
-#     st.markdown("#### Custom datapoint")
-
-
 if "datapoint" not in st.session_state:
     st.session_state.datapoint = " "
 
@@ -126,23 +95,33 @@ st.sidebar.button(
     ),
 )
 
+
 st.write("Custom datapoint", st.session_state.datapoint)
 
 
 selected = option_menu(
     menu_title=None,
     options=[
+        "Trained Logistic Regression",
         "Random Forest Classifier",
-        "Support Vector Machine",
         "XGBoost",
+        "Support Vector Machine",
     ],
     # icons = ['house', 'book', 'envelope'],
     orientation="horizontal",
 )
 
-if selected == "Random Forest Classifier":
-    model = joblib.load("models/balanced_randomforest.joblib")
-    inpu = st.session_state.datapoint
+inpu = st.session_state.datapoint
+
+
+# transform the data
+
+
+if "inpu" not in st.session_state:
+    st.session_state.inpu = inpu
+
+if type(inpu) == pd.DataFrame:
+
     inpu = st.session_state.ohe_enc.transform(inpu)
     inpu["avg_glucose_level_ranked"] = pd.cut(
         inpu["avg_glucose_level"],
@@ -154,15 +133,24 @@ if selected == "Random Forest Classifier":
     inpu.drop("avg_glucose_level", axis=1, inplace=True)
     inpu["bmi"] = inpu.pop("bmi")
 
-    # transform the data
-    st.write("Transformed datapoint", inpu)
+    if selected == "Random Forest Classifier":
+        model = joblib.load("models/balanced_randomforest.joblib")
 
-    pred = model.predict(inpu)
-    if pred == 0:
-        st.header("No Stroke!")
-    elif pred == 1:
-        st.header("STROKE")
-elif selected == "Support Vector Machine":
-    st.text("Yolo")
-elif selected == "XGBoost":
-    st.text("Rofl")
+        st.write("Transformed datapoint", inpu)
+        present_prediction(model, inpu)
+
+
+    elif selected == "Support Vector Machine":
+        model = load_pretrained_model("models/svm.pkl")
+        scaler = load_pretrained_model("models/scaler.pkl")
+        st.write("Transformed datapoint", inpu)
+        present_prediction(model, inpu)
+    elif selected == "XGBoost":
+        model = load_pretrained_model("models/xgb.joblib")
+        st.write("Transformed datapoint", inpu)
+        present_prediction(model, inpu)
+    elif selected == "Trained Logistic Regression":
+        model = joblib.load("models/trained_lr.joblib")
+
+        st.write("Transformed datapoint", inpu)
+        present_prediction(model, inpu)

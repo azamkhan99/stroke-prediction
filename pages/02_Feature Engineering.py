@@ -47,12 +47,9 @@ d_colours = lambda x: enmax_palette[color_codes_wanted.index(x)]
 
 
 ##################Feature Engineering app section###############################
-st.header("Feature Engineering")
+st.title("Feature Engineering")
 
 # Split into Train and Test Data
-st.write(
-    "Splitting dataset into train and test at the beginning is a good practice, which prevents leaking information and overfitting."
-)
 
 X = df.drop(["stroke"], axis=1)
 y = df["stroke"]
@@ -61,16 +58,20 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=0, shuffle=True
 )
 
-st.write(f"- Shape of X_train: {X_train.shape}")
-st.write(f"- Shape of X_test: {X_test.shape}")
+see_data = st.expander("Split into train and test 👉")
+with see_data:
+    st.write(f"- X_train: {X_train.shape}")
+    st.write(f"- X_test: {X_test.shape}")
 
-st.write("Check percentage of stroke cases in train and test data:")
-st.write(
-    f"- Stroke cases in y_train: {round(y_train.value_counts()[1]/len(y_train),3)*100}%"
-)
-st.write(
-    f"- Stroke cases in y_test: {round(y_test.value_counts()[1]/len(y_test),3)*100}%"
-)
+see_data = st.expander("Stroke cases in train and test 👉")
+with see_data:
+
+    st.write(
+        f"- y_train: {round(y_train.value_counts()[1]/len(y_train),3)*100}%"
+    )
+    st.write(
+        f"- y_test: {round(y_test.value_counts()[1]/len(y_test),3)*100}%"
+    )
 
 # Create 3 buttons to navigate between 'Categorical Variable Encoding', 'Handling Outliers', 'Deal with Missing Values'
 selected = option_menu(
@@ -80,30 +81,33 @@ selected = option_menu(
         "Handling Outliers",
         "Deal with Missing Values",
     ],
-    # icons = ['house', 'book', 'envelope'],
+    icons=["check-circle-fill", "exclamation-circle-fill", "question-circle-fill"],
     orientation="horizontal",
 )
 
 ###########################'Categorical Variable Encoding'###################################
 if selected == "Categorical Variable Encoding":
-    st.subheader(f"{selected}")
+    #st.subheader(f"{selected}")
 
     # Display text
 
-    st.write(
-        "**One Hot Encoding** to capture categorical label information for better visualization presentation."
-    )
 
-    st.write(
-        "One Hot Encoding will apply to the following categorical feature variables:"
+
+    see_data = st.expander("Apply **One Hot Encoding** to the following columns")
+    with see_data:
+                st.markdown(
+        """
+        - gender
+        - ever_married
+        - work_type
+        - Residence_type
+        - smoking_status
+
+"""
     )
-    st.write("- gender")
-    st.write("- ever_married")
-    st.write("- work_type")
-    st.write("- Residence_type")
-    st.write("- smoking_status")
 
     # One hot encoding
+
     ohe_enc = fe_OneHotEncoder(top_categories=None, drop_last=True)
 
     ohe_enc.fit(X_train)
@@ -118,19 +122,21 @@ if selected == "Categorical Variable Encoding":
     if "X_test" not in st.session_state:
         st.session_state.X_test = X_test
 
+    st.markdown("After one hot encoding:")
     st.write(X_train.head())
 
 
 ##########################################'Handling Outliers'##############################
 if selected == "Handling Outliers":
-    st.subheader(f"{selected}")
-    st.write("There are two feature variables contain outliers:")
-    st.write("- bmi")
-    st.write("- avg_glucose_level")
+    #st.subheader(f"{selected}")
+
 
     ######################Handling Outliers for bmi##########################################
-    st.write("**Handling Outliers for bmi**")
-    st.write("bmi is right skewed with outliers on the right tail.")
+    st.markdown(
+        """
+        #### Handling Outliers for bmi
+    """
+    )
 
     def diagnostic_plots(df, variable):
 
@@ -159,13 +165,6 @@ if selected == "Handling Outliers":
     st.set_option("deprecation.showPyplotGlobalUse", False)  # ignore warning
     st.pyplot(diagnostic_plots(X_train, "bmi"))
 
-    st.write(
-        "Replace outliers with maximum allowed values with **Capping** method. Replace outliers with median/mean could lose the representation of the population with large BMI in the model."
-    )
-
-    st.write(
-        "Note: When doing capping, we tend to cap values both in train and test set. It is important to remember that the capping values MUST be derived from the train set. And then use those same values to cap the variables in the test set."
-    )
 
     def find_skewed_boundaries(df, variable, distance):
 
@@ -186,19 +185,30 @@ if selected == "Handling Outliers":
         if a > ulbmi2:
             bmi_outlier1 += 1
 
-    st.write(
-        f"Based on the following clinical consideration, the upper bound is **{ulbmi1}**, with **{bmi_outlier}** outliers."
+
+
+
+
+    see_data = st.expander("Apply **Capping** to handle outliers")
+    with see_data:
+         st.write('Replace outliers with maximum allowable value')
+         st.write(
+        f"The upper bound is found to be **{ulbmi1}**, with **{bmi_outlier}** outliers, which covers the majority of population, including extreme obesity population shown as below:"
+    )
+         image = Image.open("Images/body-mass-index-bmi-chart.jpg")
+         st.image(image, caption="Body Mass Index Classes")
+
+         st.markdown(
+        """
+
+        Replace outliers with median/mean is another option, but it could lose the representation of the population with large BMI in the model.
+
+        *Note: When doing capping, we tend to cap values both in train and test set. It is important to remember that the capping values MUST be derived from the train set. And then use those same values to cap the variables in the test set.*
+"""
     )
 
-    image = Image.open("Images/body-mass-index-bmi-chart.jpg")
-    st.image(image, caption="Body Mass Index Classes")
 
-    image = image = Image.open("Images/bmi-chart.png")
-    st.image(image, caption="Body Mass Index Chart")
 
-    st.write(
-        "After replacing outliers with the upper limit defined previously, there are no more outliers."
-    )
     bmi_upper_limit = find_skewed_boundaries(X_train, "bmi", 1.5)
     X_train["bmi"] = np.where(
         X_train["bmi"] > bmi_upper_limit, bmi_upper_limit, X_train["bmi"]
@@ -215,21 +225,28 @@ if selected == "Handling Outliers":
 
     X_test = st.session_state.X_test
 
-    st.write("**Handling Outliers for avg_glucose_level**")
-    st.write("avg_glucose_level has a dense group of outliers at the right-hand tile.")
+    st.markdown(
+        """
+        #### Handling Outliers for avg_glucose_level
+"""
+    )
 
     st.set_option("deprecation.showPyplotGlobalUse", False)  # ignore warning
     st.pyplot(diagnostic_plots(X_train, "avg_glucose_level"))
 
-    st.write(
-        "**Binning** helps handle outliers by placing these values into the lower or higher intervals. It allows the right-tail dense group to be represented in the general population."
-    )
-    st.write("Based on domain knowledge, the following bins are advised by doctors:")
+    see_data = st.expander("Apply **Binning** to handle outliers")
+    with see_data:
+         st.markdown(
+        """
+        **Binning** helps handle outliers by placing these values into the lower or higher intervals, which allows the right-tail dense group to be represented in the general population.
+        Based on domain knowledge, average glucose level are grouped as following :
+        - Low: <90
+        - Normal: 90 - 160
+        - High: 161 - 230
+        - Very High: 231 - 500
 
-    st.write("- Low: <90")
-    st.write("- Normal: 90 - 160")
-    st.write("- High: 161 - 230")
-    st.write("- Very High: 231 - 500")
+"""
+    )
 
     # apply to train data
     X_train["avg_glucose_level_ranked"] = pd.cut(
@@ -244,7 +261,8 @@ if selected == "Handling Outliers":
         labels=["Low", "Normal", "High", "Very High"],
     )
 
-    fig = plt.figure(figsize=(10, 7))
+    fig = plt.figure(figsize=(10, 3))
+
     sns.countplot(
         x="avg_glucose_level_ranked",
         data=X_train,
@@ -257,72 +275,102 @@ if selected == "Handling Outliers":
     )
     st.pyplot(fig)
 
-    st.write(
-        "The grouped avg_glucose_level is now a categorical variable, which also needs to be encoded as numerical representation."
-    )
-    st.write("Apply **Ordinal Encoding** to preserve the ranking characteristic.")
-
-    # set up the encoder
-    encoder = fe_OrdinalEncoder(
-        encoding_method="ordered", variables=["avg_glucose_level_ranked"]
+    st.markdown('''
+    The grouped avg_glucose_level is now a categorical variable, which also needs to be encoded as numerical representation.
+    '''
     )
 
-    # fit the encoder
-    encoder.fit(X_train, y_train)
-    if "encoder" not in st.session_state:
-        st.session_state.encoder = encoder
+    col1, col2 = st.columns(2, gap="large")
+    with col1:
+        see_data = st.expander("Before **Ordinal Encoding** ")
+        with see_data:
 
-    # transform the data
-    X_train = encoder.transform(X_train)
-    X_test = encoder.transform(X_test)
+            st.write(X_train[["avg_glucose_level", "avg_glucose_level_ranked"]].head(20))
 
-    st.write(X_train[["avg_glucose_level", "avg_glucose_level_ranked"]].head(20))
+    with col2:
+        # set up the encoder
+        encoder = fe_OrdinalEncoder(
+            encoding_method="ordered", variables=["avg_glucose_level_ranked"]
+        )
+
+        # fit the encoder
+        encoder.fit(X_train, y_train)
+        if "encoder" not in st.session_state:
+            st.session_state.encoder = encoder
+
+        # transform the data
+        X_train = encoder.transform(X_train)
+        X_test = encoder.transform(X_test)
+
+
+        see_data = st.expander("After **Ordinal Encoding** ")
+        with see_data:
+
+            st.write(X_train[["avg_glucose_level", "avg_glucose_level_ranked"]].head(20))
+        #st.write(X_train[["avg_glucose_level", "avg_glucose_level_ranked"]].head(20))
+
+        st.session_state.X_train = X_train
+        st.session_state.X_test = X_test
 
 
 ######################################Deal with Missing Values#######################
 if selected == "Deal with Missing Values":
-    st.subheader(f"{selected}")
-    st.write("**Missing Data Imputation for bmi**")
+    #st.subheader(f"{selected}")
+
+    st.markdown(
+            """
+            #### Missing Data Imputation for bmi
+    """
+    )
 
     bmi_na = df["bmi"].isna().sum()
     bmi_all = df.shape[0]
-    st.write(f"Recall: There are {round((bmi_na/bmi_all),3)*100}% missing value in bmi")
-
-    st.write("Following imputation methods are tested based on AUC score:")
-    st.write("- Mean Imputation")
-    st.write("- Median Imputation")
-    st.write("- Multivariate imputation with KNN")
 
     st.write(
-        "In summary, univariate imputation (median/mean) and multivariate imputation (KNN) return approximately the same performance, with training ROC-AUC score around 97%."
+        f"There are **{round((bmi_na/bmi_all),3)*100}%** missing value in bmi"
     )
-    st.write(
-        "Choose univariate imputation to avoid additional complexity of training models to impute NA."
+    see_data = st.expander("Apply **Median Imputation** to handle missing value")
+    with see_data:
+        st.markdown(
+        """
+        Following imputation methods are tested based on AUC score:
+
+        - Mean Imputation
+        - Median Imputation
+        - Multivariate imputation with KNN
+
+        In summary, univariate imputation (median/mean) and multivariate imputation (KNN) return similar performance. **Univariate imputation** was selected to avoid introducing additional complexity.
+
+        *Note: The imputation values (that is the median/mean) should be calculated using the training set, and the same value should be used to impute the test set. This is to avoid overfitting.*
+
+"""
     )
 
-    st.write(
-        "Note: The imputation values (that is the median/mean) should be calculated using the training set, and the same value should be used to impute the test set. This is to avoid overfitting."
-    )
+    X_train = st.session_state.X_train
+
+    X_test = st.session_state.X_test
 
     mean = np.round(X_train.bmi.mean(), 1)
     median = np.round(X_train.bmi.median(), 1)
-    st.write("Median/Median calculated from training set:")
-    st.write(f"- Mean: {mean}")
-    st.write(f"- Median: {median}")
 
-    st.write(
-        "Median imputation has variable variance slightly closer to the original variance:"
-    )
+
     variance = round(X_train["bmi"].var(), 2)
-    st.write(f"- Variance before imputation: {variance}")
 
     X_train["bmi_mean"] = X_train["bmi"].fillna(mean)
     X_train["bmi_median"] = X_train["bmi"].fillna(median)
     variance_mean = round(X_train["bmi_mean"].var(), 2)
     variance_median = round(X_train["bmi_median"].var(), 2)
 
-    st.write(f"- Variance after mean imputation: {variance_mean}")
-    st.write(f"- Variance after median imputation: {variance_median}")
+    see_data = st.expander("More information for Mean, Median and Variance")
+    with see_data:
+
+        st.write(f"Mean: {mean}")
+        st.write(f"Median: {median}")
+        st.write("Variance")
+        st.write(f"Before Imputation: {variance}")
+        st.write(f"After Mean Imputation: {variance_mean}")
+        st.write(f"After Median Imputation: {variance_median}")
+
 
     # check distibution for bmi before imputation
     fig = px.histogram(
@@ -331,6 +379,8 @@ if selected == "Deal with Missing Values":
         marginal="box",
         color_discrete_sequence=["#86BC25"],
         hover_data=X_train,
+        width=1000,
+        height=800,
     )
     fig.update_layout(title_text="Box Plot and Distribution of bmi Before Imputation")
 
@@ -346,7 +396,15 @@ if selected == "Deal with Missing Values":
     colors = ["#86BC25", "#2C5234"]
 
     # Create distplot with curve_type set to 'normal'
-    fig = ff.create_distplot(hist_data, group_labels, show_hist=False, colors=colors)
+    fig = ff.create_distplot(
+        hist_data,
+        group_labels,
+        show_hist=False,
+        colors=colors,
+    )
+
+    fig.layout.height = 800
+    fig.layout.width = 1200
 
     # Add title
     fig.update_layout(
@@ -359,6 +417,14 @@ if selected == "Deal with Missing Values":
 
     # use median from training set to replace missing values in test set to prevent overfitting
     X_test["bmi_median"] = X_test["bmi"].fillna(median)
-
-    # drop bmi column
     X_test.drop(["bmi"], axis=1, inplace=True)
+    X_train.rename(columns={"bmi_median": "bmi"}, inplace=True)
+    X_test.rename(columns={"bmi_median": "bmi"}, inplace=True)
+
+    X_train.drop("avg_glucose_level", axis=1, inplace=True)
+    X_test.drop("avg_glucose_level", axis=1, inplace=True)
+
+    st.session_state.X_train = X_train
+    st.session_state.X_test = X_test
+    st.session_state.y_train = y_train
+    st.session_state.y_test = y_test
