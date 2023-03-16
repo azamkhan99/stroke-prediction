@@ -176,12 +176,13 @@ if uploaded_file is not None:
         plt.legend(["Stroke", "Non-Stroke"], bbox_to_anchor=(1.1, 1.1))
 
         plt.ylabel("Probability Density")
+        plt.xlim([0,100])
 
         st.pyplot(fig)
 
     with col2:
 
-        st.markdown("#### Age-Marrital-Status Distribution")
+        st.markdown("#### Age-Marital-Status Distribution")
         fig = plt.figure(figsize=(8, 5))
 
         # split into married and unmarried sets
@@ -211,6 +212,7 @@ if uploaded_file is not None:
         plt.ylabel("Probability Density")
         plt.xlabel("Age (Years)")
         plt.legend(["Married", "Unmarried"], bbox_to_anchor=(1.1, 1.1))
+        plt.xlim([0,100])
 
         st.pyplot(fig)
 
@@ -314,7 +316,7 @@ if uploaded_file is not None:
         st.pyplot(fig)
 
     with col2:
-        st.markdown("##### BMI-Stoke Risk (Binning)")
+        st.markdown("##### BMI-Stroke Risk (Binning)")
 
         fig = plt.figure(figsize=(8, 5))
         sns.barplot(
@@ -562,7 +564,7 @@ if uploaded_file is not None:
 
     with col2:
 
-        st.markdown("##### Smoking Classification-Stoke Distribution ")
+        st.markdown("##### Smoking Classification-Stroke Distribution ")
 
         fig = plt.figure(figsize=(8, 5))
 
@@ -607,6 +609,7 @@ if uploaded_file is not None:
         # formatting
         plt.ylabel("Probability Density")
         plt.legend(["smokes", "formely smoked", "never smoked", "Unknown"])
+        plt.xlim([0,100])
         st.pyplot(fig)
 
 st.markdown(

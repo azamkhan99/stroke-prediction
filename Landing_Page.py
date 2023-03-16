@@ -113,7 +113,9 @@ if upload_file is None:
         link = "[Data Source](https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset)"
         st.markdown(link, unsafe_allow_html=True)
 
-    st.markdown("Upload a csv or use sample dataset")
+
+    st.markdown("""Data Scientists: Upload a csv file or use sample dataset""")
+    st.markdown("""Clinicians/GPs: Navigate to __Prediction__ Page""")
 
 else:
 

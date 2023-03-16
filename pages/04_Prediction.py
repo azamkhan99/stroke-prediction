@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pickle
 
 from utils.helpers import present_prediction, pr_comparison
 
@@ -121,15 +122,26 @@ if "inpu" not in st.session_state:
     st.session_state.inpu = inpu
 
 if type(inpu) == pd.DataFrame:
+    if "ohe_enc" not in st.session_state:
+        with open('models/ohe_enc.pickle', 'rb') as handle:
+            ohe_enc = pickle.load(handle)
+            print("pre-loaded encoders fitted")
+    if "encoder" not in st.session_state:
+        with open('models/encoder.pickle', 'rb') as handle:
+            encoder = pickle.load(handle)
 
-    inpu = st.session_state.ohe_enc.transform(inpu)
+    else:
+        print("new encoder")
+        ohe_enc = st.session_state.ohe_enc
+        encoder = st.session_state.encoder
+    inpu = ohe_enc.transform(inpu)
     inpu["avg_glucose_level_ranked"] = pd.cut(
         inpu["avg_glucose_level"],
         bins=[0, 90, 160, 230, 500],
         labels=["Low", "Normal", "High", "Very High"],
     )
     # fit the encoder
-    inpu = st.session_state.encoder.transform(inpu)
+    inpu = encoder.transform(inpu)
     inpu.drop("avg_glucose_level", axis=1, inplace=True)
     inpu["bmi"] = inpu.pop("bmi")
 
