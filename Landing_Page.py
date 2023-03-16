@@ -65,13 +65,13 @@ elif use_sample_data == "Upload Custom CSV File":
         if df is not None:
             st.markdown("You may now navigate to Data Overview Page!")
 
-image = Image.open("Images/deloitte.png")
+#image = Image.open("Images/deloitte.png")
 logo = Image.open("Images/logo.png")
 
 col1, col2, col3, col4 = st.columns((1, 1, 5, 2))
 
-with col1:
-    st.image(image, use_column_width=True)
+#with col1:
+    #st.image(image, use_column_width=True)
 
 with col2:
     st.image(logo ,use_column_width=True)
