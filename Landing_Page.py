@@ -41,10 +41,10 @@ def load_lottieurl(url: str):
 
 
 # Sidebar setup
-st.sidebar.title("Begin by uploading a dataset")
+st.sidebar.title("Begin with sample dataset")
 
 use_sample_data = st.sidebar.radio(
-    "", ("Use Sample Dataset", "Upload Custom CSV File"), index=1
+    "", ("Use Sample Dataset", "Upload Custom CSV File"), index=0
 )
 
 if use_sample_data == "Use Sample Dataset":
@@ -94,7 +94,7 @@ with col3:
 
 
 
-if upload_file is None:
+if upload_file is not None:
 
     st.subheader("An application for fast and easy data processing, visualisation and real-time stroke prediction.")
 
@@ -113,14 +113,8 @@ if upload_file is None:
         link = "[Data Source](https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset)"
         st.markdown(link, unsafe_allow_html=True)
 
-    
-    st.markdown("""Data Scientists: Upload a csv file or use sample dataset""")
-    st.markdown("""Clinicians/GPs: Navigate to __Prediction__ Page""")
-    
-    st.markdown("""👉 MUST READ User Guidence: Data Scientists need to Navigate page by page and click through every button in feature engineering, 
+    st.markdown(""" :red[MUST READ] User Guidence: Please navigate page by page and click through every button in Feature Engineering, 
     as the web-application is running the code in real-time. There is a running-man animation at the top-right corner, please only move on after the running icon disappears""")
-
-else:
 
     row6_spacer1, row6_1, row6_spacer2 = st.columns((0.2, 7.1, 0.2))
     #with row6_1:
@@ -191,3 +185,34 @@ else:
         with see_data:
             image = Image.open("Images/Team Structure.png")
             st.image(image)
+
+
+else:
+
+  st.subheader("An application for fast and easy data processing, visualisation and real-time stroke prediction.")
+
+  st.markdown(""" :red[MUST READ] User Guidence: Data Scientists need to Navigate page by page and click through every button in feature engineering, 
+    as the web-application is running the code in real-time. There is a running-man animation at the top-right corner, please only move on after the running icon disappears""")
+
+    
+
+  see_data = st.expander("Disclaimer")
+  with see_data:
+        st.markdown(
+        """
+
+        ⚠️**Warning**: This application is designed for skill developement, which does not provide any clinical recommendations.
+
+        *Note:
+        This demo uses publically available data from Kaggle and prediction is based on ML models that are previously trained on sample data.
+
+    """
+    )
+        link = "[Data Source](https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset)"
+        st.markdown(link, unsafe_allow_html=True)
+
+    
+  st.markdown("""Data Scientists: Upload a csv file or use sample dataset""")
+  st.markdown("""Clinicians/GPs: Navigate to __Prediction__ Page""")
+    
+  
