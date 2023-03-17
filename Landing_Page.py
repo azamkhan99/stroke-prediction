@@ -113,7 +113,7 @@ if upload_file is not None:
         link = "[Data Source](https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset)"
         st.markdown(link, unsafe_allow_html=True)
 
-    st.markdown(""" :red[MUST READ] User Guidence: Please navigate page by page and click through every button in Feature Engineering, 
+    st.markdown(""" :red[MUST READ] User Guidance: Please navigate page by page and click through every button in Feature Engineering, 
     as the web-application is running the code in real-time. There is a running-man animation at the top-right corner, please only move on after the running icon disappears""")
 
     row6_spacer1, row6_1, row6_spacer2 = st.columns((0.2, 7.1, 0.2))
@@ -137,7 +137,7 @@ if upload_file is not None:
             df,
             values=values,
             names=labels,
-            title="Distribution of Target value",
+            title="Distribution of target value",
             hole=0.3,
             color_discrete_sequence=["#86BC25", "#43B02A"]
         )
@@ -156,7 +156,7 @@ if upload_file is not None:
             df,
             values=values,
             names=labels,
-            title="Distribution of Population gender",
+            title="Distribution of population gender",
             hole=0.3,
             color_discrete_sequence=["#86BC25", "#43B02A"]
         )
@@ -191,7 +191,7 @@ else:
 
   st.subheader("An application for fast and easy data processing, visualisation and real-time stroke prediction.")
 
-  st.markdown(""" :red[MUST READ] User Guidence: Data Scientists need to Navigate page by page and click through every button in feature engineering, 
+  st.markdown(""" :red[MUST READ] User Guidance: Data Scientists need to Navigate page by page and click through every button in feature engineering, 
     as the web-application is running the code in real-time. There is a running-man animation at the top-right corner, please only move on after the running icon disappears""")
 
     
